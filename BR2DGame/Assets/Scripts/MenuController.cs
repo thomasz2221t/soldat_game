@@ -62,6 +62,7 @@ public class MenuController : MonoBehaviourPunCallbacks
     }
 
     public override void OnJoinedLobby() {
+        PhotonNetwork.NickName = UsernameInput.GetComponent<InputField>().text;
         connectingScreen.SetActive(false);
     }
 
