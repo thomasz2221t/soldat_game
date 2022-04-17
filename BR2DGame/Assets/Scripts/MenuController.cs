@@ -46,7 +46,7 @@ public class MenuController : MonoBehaviourPunCallbacks
     public void ChangeUserNameInput() {
 
         //Debug.Log(UsernameInput.GetComponent<Text>().text.Length);
-        if (UsernameInput.GetComponent<InputField>().text.Length >= 3) {
+        if (UsernameInput.GetComponent<InputField>().text.Length >= 3) { // UsernameInput.text nie dziala xD
             StartButton.SetActive(true);
         }
         else {
@@ -75,7 +75,6 @@ public class MenuController : MonoBehaviourPunCallbacks
     }
 
     public override void OnJoinedRoom() {
-        PhotonNetwork.LoadLevel("Game"); 
-        
+        PhotonNetwork.LoadLevel("Game"); // <<- wazne, zmiana sceny
     }
 }
