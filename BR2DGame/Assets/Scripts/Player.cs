@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
     {
         view = GetComponent<PhotonView>();
         //playerName = GetComponent<TMP_Text>();
-        Debug.Log(view.Owner.NickName);
+        //Debug.Log(view.Owner.NickName);
         playerName.text = view.Owner.NickName;
         //playerName.GetComponent<Text>().text = view.Owner.NickName;
     }

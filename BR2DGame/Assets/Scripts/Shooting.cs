@@ -10,15 +10,35 @@ public class Shooting : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
 
     [SerializeField] private float bulletForce = 20f;
+    [SerializeField] static private float shotCooldown = 0.1f;
+    [SerializeField] private int magazineSize = 30;
+
+    float timeStamp = 0;
+
+    float timeStamp2 = 0;
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetButtonDown("Fire1"))
+        if (Input.GetButton("Fire1"))
         {
             //GetComponent<PhotonView>().RPC("Shoot", PhotonTargets.All);
-            Shoot();
-           
+            if((timeStamp <= Time.time)&&(magazineSize>0))
+            {
+                Shoot();
+                timeStamp = Time.time + shotCooldown;
+                magazineSize--;
+            }
+
+            //[DELETE] AutoReload cooldown not working anyway
+            if(magazineSize <= 0)
+            {
+                if(timeStamp2 <= Time.time)
+                {
+                    magazineSize = 30;
+                    timeStamp2 = Time.time + 3f;
+                }
+            }
         }
 
     }
