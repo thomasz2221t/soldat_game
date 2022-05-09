@@ -5,7 +5,8 @@ using UnityEngine;
 //Bullets collisions and dmg or blowing up- can be particle effect
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float DestroyTime = 2f;
+    [SerializeField] private float destroyTime = 2f;
+    [SerializeField] private int damage = 15;
 
     private void Awake()
     {
@@ -14,13 +15,19 @@ public class Bullet : MonoBehaviour
 
     IEnumerator DestroyByTime()
     {
-        yield return new WaitForSeconds(DestroyTime);
+        yield return new WaitForSeconds(destroyTime);
         Destroy(gameObject);
     }
 
     //collisions
-    void onCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
+        Box destroyable = collision.GetComponent<Box>();
 
+        if (destroyable != null)
+        {
+            destroyable.TakeDamage(damage);
+        }
+        Destroy(gameObject);
     }
 }
