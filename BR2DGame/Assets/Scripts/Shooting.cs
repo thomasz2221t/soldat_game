@@ -17,15 +17,22 @@ public class Shooting : MonoBehaviour
 
     float timeStamp2 = 0;
 
+    PhotonView pv;
+
+    void Start()
+    {
+        pv = this.GetComponent<PhotonView>();
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButton("Fire1"))
+        if (Input.GetButton("Fire1")&& pv.IsMine)
         {
             //GetComponent<PhotonView>().RPC("Shoot", PhotonTargets.All);
             if((timeStamp <= Time.time)&&(magazineSize>0))
             {
-                Shoot();
+                pv.RPC("Shoot", RpcTarget.All);
                 timeStamp = Time.time + shotCooldown;
                 magazineSize--;
             }
@@ -45,10 +52,12 @@ public class Shooting : MonoBehaviour
 
     //functaion realizing releasing the bullet from barell
     //[RPC] - obsolete
+
+    [PunRPC]
     void Shoot()
     {
- 
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);//spawning bullet
+        GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, firePoint.transform.position, firePoint.transform.rotation); //<-should work
+        //GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);//spawning bullet
         Rigidbody2D bulletRigidBody = bullet.GetComponent<Rigidbody2D>();//accessing rigidbody
         bulletRigidBody.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);//adding force to the bullet, making it fly
     }
