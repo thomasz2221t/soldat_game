@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
             //playerCamera = sceneCamera;
 
             sceneCamera.SetActive(false);
-            //playerCamera.SetActive(true);
+            playerCamera.SetActive(true);
         }
         //playerName = GetComponent<TMP_Text>();
         Debug.Log(view.Owner.NickName);

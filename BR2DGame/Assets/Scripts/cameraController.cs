@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class cameraController : MonoBehaviour
 {
+    
     [SerializeField] PhotonView view;
     private Transform target;
     public float smoothSpeed = 0.125f;
@@ -13,10 +14,8 @@ public class cameraController : MonoBehaviour
     // Start is called before the first frame update
     private void Start() {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        Debug.Log("DUPA2");
         foreach (GameObject player in players) {
             if (PhotonView.Get(player).IsMine) {
-                Debug.Log("DUPA");
                 this.target = player.transform;
                 break;
             }
@@ -25,6 +24,6 @@ public class cameraController : MonoBehaviour
 
     // Update is called once per frame
     private void LateUpdate() {
-        transform.position = target.position + offset;
+        //transform.position = target.position + offset;
     }
 }
