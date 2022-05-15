@@ -10,11 +10,10 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed = 50;
     [SerializeField] PhotonView view;
     [SerializeField] TMP_Text playerName;
-    //[SerializeField] InputField usernameInput;
 
     //control of the player's rigid body - movement while aiming
     [SerializeField] private Rigidbody2D playerRigidbody;
-    private GameObject playerCamera;
+    [SerializeField] private GameObject playerCamera;
     private GameObject sceneCamera;
 
     public Vector2 inputPosition;
@@ -29,9 +28,12 @@ public class Player : MonoBehaviour
 
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
-            playerCamera = sceneCamera;
+            //playerCamera = GameObject.Find("PlayerCamera");
+
+            //playerCamera = sceneCamera;
+
             sceneCamera.SetActive(false);
-            playerCamera.SetActive(true);
+            //playerCamera.SetActive(true);
         }
         //playerName = GetComponent<TMP_Text>();
         Debug.Log(view.Owner.NickName);
