@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
 
     //control of the player's rigid body - movement while aiming
     [SerializeField] private Rigidbody2D playerRigidbody;
-    [SerializeField] private Camera playerCam;
+    private GameObject playerCamera;
+    private GameObject sceneCamera;
 
     public Vector2 inputPosition;
     public Vector2 mousePosition;
@@ -24,6 +25,14 @@ public class Player : MonoBehaviour
     void Start()
     {
         view = GetComponent<PhotonView>();
+        //sceneCamera = GameObject.Find("Camera");
+
+        if (view.IsMine) {
+            sceneCamera = GameObject.Find("Main Camera");
+            playerCamera = sceneCamera;
+            sceneCamera.SetActive(false);
+            playerCamera.SetActive(true);
+        }
         //playerName = GetComponent<TMP_Text>();
         Debug.Log(view.Owner.NickName);
         playerName.text = view.Owner.NickName;
@@ -66,16 +75,16 @@ public class Player : MonoBehaviour
             float inputX = Input.GetAxis("Horizontal");
             float inputY = Input.GetAxis("Vertical");
 
-            mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition);//getting the place of mouse cursor as world's point
+            //mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition);//getting the place of mouse cursor as world's point
 
             Vector3 movement = new Vector3(speed * inputX, speed * inputY, 0);
             movement *= Time.deltaTime;
 
-            Vector2 lookDir = mousePosition - playerRigidbody.position;
-            float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 195f; //195 degrees - offset. offset should be changed after placing final player model
+            //Vector2 lookDir = mousePosition - playerRigidbody.position;
+            //float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 195f; //195 degrees - offset. offset should be changed after placing final player model
 
             transform.Translate(movement);
-            transform.rotation = Quaternion.Euler(0,0,angle);
+            //transform.rotation = Quaternion.Euler(0,0,angle);
         }
     }
 }
