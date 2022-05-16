@@ -77,7 +77,8 @@ public class Player : MonoBehaviour
             float inputX = Input.GetAxis("Horizontal");
             float inputY = Input.GetAxis("Vertical");
 
-            //mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition);//getting the place of mouse cursor as world's point
+            //Camera playerCam = sceneCamera.GetComponent<Camera>();
+            //mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);//getting the place of mouse cursor as world's point
 
             Vector3 movement = new Vector3(speed * inputX, speed * inputY, 0);
             movement *= Time.deltaTime;

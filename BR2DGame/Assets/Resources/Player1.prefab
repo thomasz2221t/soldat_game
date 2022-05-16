@@ -1007,6 +1007,7 @@ MonoBehaviour:
   speed: 20
   view: {fileID: 0}
   playerName: {fileID: 654949055}
+  playerCam: {fileID: 0}
   playerRigidbody: {fileID: 952983562}
   playerCamera: {fileID: 605388836}
   inputPosition: {x: 0, y: 0}
@@ -1081,7 +1082,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePoint: {fileID: 2571835467008889865}
   bulletPrefab: {fileID: 7852711942540484104, guid: f3497a9acd763ae40849c51c35e2123c, type: 3}
-  bulletForce: 20
   magazineSize: 30
 --- !u!50 &952983562
 Rigidbody2D:

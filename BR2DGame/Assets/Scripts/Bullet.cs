@@ -6,9 +6,23 @@ using UnityEngine;
 //Bullets collisions and dmg or blowing up- can be particle effect
 public class Bullet : MonoBehaviourPun
 {
+    [SerializeField] private GameObject shooter;
     [SerializeField] private float destroyTime = 2f;
     [SerializeField] private int damage = 15;
-    //[SerializeField] private float bulletForce = 20f;
+    [SerializeField] private float bulletForce = 20f;
+
+    private Transform firePoint;
+
+
+    private void Start()
+    {
+        //nice way to get child object by name
+        //GameObject firePoint = shooter.transform.Find("FirePoint").gameObject;
+        firePoint = shooter.transform.Find("FirePoint");
+        Debug.Log(firePoint);
+        Rigidbody2D bulletRigidBody = this.GetComponent<Rigidbody2D>();//accessing rigidbody
+        bulletRigidBody.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);//adding force to the bullet, making it fly
+    }
 
     private void Awake()
     {
@@ -20,11 +34,6 @@ public class Bullet : MonoBehaviourPun
         yield return new WaitForSeconds(destroyTime);
         this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
     }
-
-    /*void Update()
-    {
-        transform.Translate(Vector2.up * Time.deltaTime * bulletForce);
-    }*/
 
     //collisions
     private void OnTriggerEnter2D(Collider2D collision)

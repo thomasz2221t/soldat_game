@@ -169,5 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 876887912b3facb44bb420ca0791f387, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shooter: {fileID: 2939666525252459142, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
   destroyTime: 2
   damage: 15
+  bulletForce: 20
