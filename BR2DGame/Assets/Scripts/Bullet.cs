@@ -11,6 +11,8 @@ public class Bullet : MonoBehaviourPun
     [SerializeField] private int damage = 15;
     [SerializeField] private float bulletForce = 20f;
 
+    private Rigidbody2D bulletRigidBody;
+
     private Transform firePoint;
 
 
@@ -20,8 +22,8 @@ public class Bullet : MonoBehaviourPun
         //GameObject firePoint = shooter.transform.Find("FirePoint").gameObject;
         firePoint = shooter.transform.Find("FirePoint");
         Debug.Log(firePoint);
-        Rigidbody2D bulletRigidBody = this.GetComponent<Rigidbody2D>();//accessing rigidbody
-        bulletRigidBody.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);//adding force to the bullet, making it fly
+        bulletRigidBody = this.GetComponent<Rigidbody2D>();//accessing rigidbody
+        bulletRigidBody.AddForce(this.transform.up * bulletForce, ForceMode2D.Impulse);//adding force to the bullet, making it fly
     }
 
     private void Awake()

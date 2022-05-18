@@ -1007,7 +1007,6 @@ MonoBehaviour:
   speed: 20
   view: {fileID: 0}
   playerName: {fileID: 654949055}
-  playerCam: {fileID: 0}
   playerRigidbody: {fileID: 952983562}
   playerCamera: {fileID: 605388836}
   inputPosition: {x: 0, y: 0}
