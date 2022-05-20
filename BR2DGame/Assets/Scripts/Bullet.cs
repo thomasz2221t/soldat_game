@@ -20,8 +20,8 @@ public class Bullet : MonoBehaviourPun
     {
         //nice way to get child object by name
         //GameObject firePoint = shooter.transform.Find("FirePoint").gameObject;
-        firePoint = shooter.transform.Find("FirePoint");
-        Debug.Log(firePoint);
+        //firePoint = shooter.transform.Find("FirePoint");
+        //Debug.Log(firePoint);
         bulletRigidBody = this.GetComponent<Rigidbody2D>();//accessing rigidbody
         bulletRigidBody.AddForce(this.transform.up * bulletForce, ForceMode2D.Impulse);//adding force to the bullet, making it fly
     }

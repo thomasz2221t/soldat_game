@@ -14,6 +14,9 @@ public class Player : MonoBehaviour
     //control of the player's rigid body - movement while aiming
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
+    private GameObject weapon;
+    private GameObject firePoint;
+
     private GameObject sceneCamera;
 
     public Vector2 inputPosition;
@@ -28,6 +31,8 @@ public class Player : MonoBehaviour
 
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
+            weapon = GameObject.Find("Weapon");
+            firePoint = GameObject.Find("FirePoint");
             //playerCamera = GameObject.Find("PlayerCamera");
 
             //playerCamera = sceneCamera;
@@ -130,10 +135,14 @@ public class Player : MonoBehaviour
             //Vector2 movement = new Vector3(speed * inputX, speed * inputY, 0);
             //movement *= Time.deltaTime;
 
+            //Character movement
             playerRigidbody.MovePosition(playerRigidbody.position + inputPosition * speed * Time.fixedDeltaTime);
-            Vector2 lookDir = mousePosition - playerRigidbody.position;
+
+            //Character rotation
+            float lookDirX = mousePosition.x - weapon.transform.position.x;
+            float lookDirY = mousePosition.y - weapon.transform.position.y;
             float currentAngle = playerRigidbody.rotation;
-            float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 195f; //195 degrees - offset. offset should be changed after placing final player model
+            float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 95f; //195 degrees - offset. offset should be changed after placing final player model
             float angleDiff = angle - currentAngle;
             angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
             angle = currentAngle + angleDiff;
@@ -148,9 +157,13 @@ public class Player : MonoBehaviour
             //player.transform.Translate(new Vector3(movement.x, movement.y, 0));
             // player.transform.Rotate(new Vector3(0, 0, angle) * Time.deltaTime * 20f);
             //cameraObject.transform.rotation = Quaternion.Euler(0, 0, 0);
-            playerRigidbody.rotation = smoothedAngle;
-            GameObject cameraObject = transform.Find("PlayerCamera").gameObject;
-            cameraObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+
+
+            weapon.transform.rotation = Quaternion.Euler(0, 0, angle);
+            //firePoint.transform.rotation = Quaternion.Euler(0, 0, angle);
+            //playerRigidbody.rotation = smoothedAngle;
+            //GameObject cameraObject = transform.Find("PlayerCamera").gameObject;
+            //cameraObject.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
     }
 }
