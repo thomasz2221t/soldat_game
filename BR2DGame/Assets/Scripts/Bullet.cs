@@ -11,17 +11,15 @@ public class Bullet : MonoBehaviourPun
     [SerializeField] private int damage = 15;
     [SerializeField] private float bulletForce = 20f;
 
+    private Rigidbody2D bulletRigidBody;
+
     private Transform firePoint;
 
 
     private void Start()
     {
-        //nice way to get child object by name
-        //GameObject firePoint = shooter.transform.Find("FirePoint").gameObject;
-        firePoint = shooter.transform.Find("FirePoint");
-        Debug.Log(firePoint);
-        Rigidbody2D bulletRigidBody = this.GetComponent<Rigidbody2D>();//accessing rigidbody
-        bulletRigidBody.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);//adding force to the bullet, making it fly
+        bulletRigidBody = this.GetComponent<Rigidbody2D>(); 
+        bulletRigidBody.AddForce(this.transform.up * bulletForce, ForceMode2D.Impulse); //Adding force to the bullet, making it move
     }
 
     private void Awake()
@@ -35,7 +33,7 @@ public class Bullet : MonoBehaviourPun
         this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
     }
 
-    //collisions
+    //Collisions
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Box destroyable = collision.GetComponent<Box>();

@@ -30,12 +30,9 @@ public class MenuController : MonoBehaviourPunCallbacks
         usernameMenu.SetActive(true);
     }
 
-    /// <summary>
-    ///  
-    /// </summary>
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinLobby(); // ability to join and create lobbies
+        PhotonNetwork.JoinLobby();
         Debug.Log("Connected to server");
     }
 
@@ -45,8 +42,7 @@ public class MenuController : MonoBehaviourPunCallbacks
 
     public void ChangeUserNameInput() {
 
-        //Debug.Log(UsernameInput.GetComponent<Text>().text.Length);
-        if (UsernameInput.GetComponent<InputField>().text.Length >= 3) { // UsernameInput.text nie dziala xD
+        if (UsernameInput.GetComponent<InputField>().text.Length >= 3) {
             StartButton.SetActive(true);
         }
         else {
@@ -75,6 +71,6 @@ public class MenuController : MonoBehaviourPunCallbacks
     }
 
     public override void OnJoinedRoom() {
-        PhotonNetwork.LoadLevel("Game"); // <<- wazne, zmiana sceny
+        PhotonNetwork.LoadLevel("Game"); //Changing scene to "Game" after joining room
     }
 }

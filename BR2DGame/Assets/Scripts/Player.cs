@@ -11,9 +11,11 @@ public class Player : MonoBehaviour
     [SerializeField] PhotonView view;
     [SerializeField] TMP_Text playerName;
 
-    //control of the player's rigid body - movement while aiming
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
+    private GameObject weapon;
+    private GameObject firePoint;
+
     private GameObject sceneCamera;
 
     public Vector2 inputPosition;
@@ -24,70 +26,48 @@ public class Player : MonoBehaviour
     void Start()
     {
         view = GetComponent<PhotonView>();
-        //sceneCamera = GameObject.Find("Camera");
-
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
-            //playerCamera = GameObject.Find("PlayerCamera");
-
-            //playerCamera = sceneCamera;
+            weapon = GameObject.Find("Weapon");
+            firePoint = GameObject.Find("FirePoint");
 
             sceneCamera.SetActive(false);
             playerCamera.SetActive(true);
         }
-        //playerName = GetComponent<TMP_Text>();
         Debug.Log(view.Owner.NickName);
         playerName.text = view.Owner.NickName;
-        //playerName.GetComponent<Text>().text = view.Owner.NickName;
     }
 
-    // Update is called once per frame - function is calculating parameters needed in FixedUpdate to perform movement
-    /*void Update()
+    private void Update()
     {
-        if (view.IsMine) {
-            inputPosition.x = Input.GetAxis("Horizontal");
-            inputPosition.y = Input.GetAxis("Vertical");
+        inputPosition.x = Input.GetAxis("Horizontal");
+        inputPosition.y = Input.GetAxis("Vertical");
 
-            mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition);//getting the place of mouse cursor as world's point
-
-            //Vector3 movement = new Vector3(speed * inputX, speed * inputY, 0);
-            //movement *= Time.deltaTime;
-            //transform.Translate(movement);
-
-        }
-    }*/
-
-    //Moving player basing on value in Update function (input of movment)
-    /*void FixedUpdate()
-    {
-        //moving player
-        playerRigidbody.MovePosition(playerRigidbody.position + inputPosition * speed * Time.deltaTime);
-
-        //aiming - player is aiming towards middle of the model - important while placing weapon on model
-        Vector2 lookDir = mousePosition - playerRigidbody.position;
-        float angle = Mathf.Atan2(lookDir.y,lookDir.x) * Mathf.Rad2Deg - 195f; //195 degrees - offset. offset should be changed after placing final player model
-        playerRigidbody.rotation = angle;
-    }*/
+        Camera playerCam = playerCamera.GetComponent<Camera>();
+        mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition); //Getting the coordinates of mouse cursor as world's point
+    }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (view.IsMine)
         {
-            float inputX = Input.GetAxis("Horizontal");
-            float inputY = Input.GetAxis("Vertical");
+            //Character movement
+            playerRigidbody.MovePosition(playerRigidbody.position + inputPosition * speed * Time.fixedDeltaTime);
 
-            //Camera playerCam = sceneCamera.GetComponent<Camera>();
-            //mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);//getting the place of mouse cursor as world's point
+            //Character rotation
+            float lookDirX = mousePosition.x - weapon.transform.position.x;
+            float lookDirY = mousePosition.y - weapon.transform.position.y;
+            float currentAngle = playerRigidbody.rotation;
+            float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 95f; //95 degrees - offset, which should be changed after creating final player model
+            weapon.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the weapon, it should point to the local cursor
 
-            Vector3 movement = new Vector3(speed * inputX, speed * inputY, 0);
-            movement *= Time.deltaTime;
+            //More elaborate way to smoothe the angle is written below. Should be used at a later time
 
-            //Vector2 lookDir = mousePosition - playerRigidbody.position;
-            //float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 195f; //195 degrees - offset. offset should be changed after placing final player model
-
-            transform.Translate(movement);
-            //transform.rotation = Quaternion.Euler(0,0,angle);
+            /*float angleDiff = angle - currentAngle;
+            angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
+            angle = currentAngle + angleDiff;
+            float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
         }
     }
 }
