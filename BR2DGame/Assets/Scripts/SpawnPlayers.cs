@@ -7,6 +7,7 @@ public class SpawnPlayers : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
 
+    //Coordinates within which player could be spawned
     [SerializeField] private float minX;
     [SerializeField] private float maxX;
     [SerializeField] private float minY;
@@ -16,12 +17,6 @@ public class SpawnPlayers : MonoBehaviour
     void Start()
     {
         Vector2 randomPosition = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
-        PhotonNetwork.Instantiate(playerPrefab.name, randomPosition, Quaternion.identity); // spawning each player as different entity
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        PhotonNetwork.Instantiate(playerPrefab.name, randomPosition, Quaternion.identity); //Spawning each player as different entity
     }
 }

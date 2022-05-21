@@ -8,13 +8,10 @@ public class Shooting : MonoBehaviour
 {
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject bulletPrefab;
-
-    //[SerializeField] private float bulletForce = 20f;
     [SerializeField] static private float shotCooldown = 0.1f;
     [SerializeField] private int magazineSize = 30;
 
     float timeStamp = 0;
-
     float timeStamp2 = 0;
 
     PhotonView pv;
@@ -29,10 +26,8 @@ public class Shooting : MonoBehaviour
     {
         if (Input.GetButton("Fire1")&& pv.IsMine)
         {
-            //GetComponent<PhotonView>().RPC("Shoot", PhotonTargets.All);
             if((timeStamp <= Time.time)&&(magazineSize>0))
             {
-                //pv.RPC("Shoot", RpcTarget.All);
                 Shoot();
                 timeStamp = Time.time + shotCooldown;
                 magazineSize--;
@@ -48,18 +43,13 @@ public class Shooting : MonoBehaviour
                 }
             }
         }
-
     }
 
-    //functaion realizing releasing the bullet from barell
+    //function realizing releasing the bullet from barell
     //[RPC] - obsolete
-
     [PunRPC]
     void Shoot()
     {
-        GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, firePoint.transform.position, firePoint.transform.rotation); //<-should work
-        //GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);//spawning bullet
-        //Rigidbody2D bulletRigidBody = bullet.GetComponent<Rigidbody2D>();//accessing rigidbody
-        //bulletRigidBody.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);//adding force to the bullet, making it fly
+        GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, firePoint.transform.position, firePoint.transform.rotation); //Instantiation of a new bullet
     }
 }

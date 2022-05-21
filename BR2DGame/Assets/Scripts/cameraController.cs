@@ -8,8 +8,6 @@ public class cameraController : MonoBehaviour
     
     [SerializeField] PhotonView view;
     private Transform target;
-    public float smoothSpeed = 0.125f;
-    public Vector3 offset;
 
     // Start is called before the first frame update
     private void Start() {
@@ -20,10 +18,5 @@ public class cameraController : MonoBehaviour
                 break;
             }
         }
-    }
-
-    // Update is called once per frame
-    private void LateUpdate() {
-        //transform.position = target.position + offset;
     }
 }
