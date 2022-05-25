@@ -19,7 +19,5 @@ public class SpawnPlayers : MonoBehaviour
         Vector2 randomPosition = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
         PhotonNetwork.Instantiate(playerPrefab.name, randomPosition, Quaternion.identity); //Spawning each player as different entity
 
-        //Cursor.visible = false;
-
     }
 }
