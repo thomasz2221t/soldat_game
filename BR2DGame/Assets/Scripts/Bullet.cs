@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviourPun
     [SerializeField] private float destroyTime = 2f;
     [SerializeField] private int damage = 15;
     [SerializeField] private float bulletForce = 20f;
+    [SerializeField] PhotonView pv;
 
     private Rigidbody2D bulletRigidBody;
 
@@ -18,6 +19,7 @@ public class Bullet : MonoBehaviourPun
 
     private void Start()
     {
+        pv = GetComponent<PhotonView>();
         bulletRigidBody = this.GetComponent<Rigidbody2D>(); 
         bulletRigidBody.AddForce(this.transform.up * bulletForce, ForceMode2D.Impulse); //Adding force to the bullet, making it move
     }
@@ -36,13 +38,30 @@ public class Bullet : MonoBehaviourPun
     //Collisions
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        bool hit = false;
         Box destroyable = collision.GetComponent<Box>();
+        Player playerBody = collision.GetComponent<Player>();
+
+        if(playerBody != null) { 
+        Debug.Log(GameObject.FindObjectOfType<Player>().GetComponent<PhotonView>());
+        Debug.Log(playerBody.GetComponent<PhotonView>());
+        }
 
         if (destroyable != null)
         {
             destroyable.TakeDamage(damage);
+            hit = true;
         }
-        Destroy(gameObject);
+
+        if((playerBody != null)&&(GameObject.FindObjectOfType<Player>().GetComponent<PhotonView>().GetInstanceID() != playerBody.GetComponent<PhotonView>().GetInstanceID()))
+        {
+            playerBody.TakeDamage(damage);
+            hit = true;
+        }
+
+        if (hit)
+        PhotonNetwork.Destroy(gameObject);
+
     }
 
     [PunRPC]

@@ -53993,6 +53993,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 221668379045370973, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
+      propertyPath: m_Radius
+      value: 0.2631561
+      objectReference: {fileID: 0}
+    - target: {fileID: 221668379045370973, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.05705925
+      objectReference: {fileID: 0}
+    - target: {fileID: 221668379045370973, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.5588576
+      objectReference: {fileID: 0}
     - target: {fileID: 2937140377104741910, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -54041,9 +54053,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player1
       objectReference: {fileID: 0}
+    - target: {fileID: 2939666525252459142, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6503425617983613220, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: sceneViewId
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7280105100535830341, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}

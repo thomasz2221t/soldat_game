@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
+
+    [SerializeField] private int health = 1000;
     private GameObject weapon;
     private GameObject firePoint;
 
@@ -23,6 +25,8 @@ public class Player : MonoBehaviour
 
 
     // Start is called before the first frame update
+    //nice way to get child object by name
+    //GameObject firePoint = shooter.transform.Find("FirePoint").gameObject;
     void Start()
     {
         view = GetComponent<PhotonView>();
@@ -68,6 +72,15 @@ public class Player : MonoBehaviour
             angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
             angle = currentAngle + angleDiff;
             float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
         }
     }
 }
