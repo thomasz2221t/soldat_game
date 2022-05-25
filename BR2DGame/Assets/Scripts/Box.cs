@@ -19,6 +19,6 @@ public class Box : MonoBehaviour
 
     private void Die()
     {
-        Destroy(gameObject);
+        PhotonNetwork.Destroy(gameObject);
     }
 }
