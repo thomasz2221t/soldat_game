@@ -36,6 +36,11 @@ public class Bullet : MonoBehaviourPun
     //Collisions
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.gameObject.tag == "WeaponIcon") { // if collider's tag is equal to "WeaponIcon" then ignore the collision 
+            Physics2D.IgnoreCollision(collision.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>()); 
+            return;
+        }
+
         Box destroyable = collision.GetComponent<Box>();
 
         if (destroyable != null)
