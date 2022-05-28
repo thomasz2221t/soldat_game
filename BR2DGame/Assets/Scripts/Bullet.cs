@@ -42,25 +42,24 @@ public class Bullet : MonoBehaviourPun
         Box destroyable = collision.GetComponent<Box>();
         Player playerBody = collision.GetComponent<Player>();
 
-        if(playerBody != null) { 
-        Debug.Log(GameObject.FindObjectOfType<Player>().GetComponent<PhotonView>());
-        Debug.Log(playerBody.GetComponent<PhotonView>());
-        }
-
         if (destroyable != null)
         {
             destroyable.TakeDamage(damage);
             hit = true;
         }
 
-        if((playerBody != null)&&(GameObject.FindObjectOfType<Player>().GetComponent<PhotonView>().GetInstanceID() != playerBody.GetComponent<PhotonView>().GetInstanceID()))
+        if((playerBody != null)&&(!collision.gameObject.GetPhotonView().IsMine))
         {
             playerBody.TakeDamage(damage);
             hit = true;
         }
 
         if (hit)
-        PhotonNetwork.Destroy(gameObject);
+        {
+            StopCoroutine("DestroyByTime");
+            this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
+        }
+        
 
     }
 
