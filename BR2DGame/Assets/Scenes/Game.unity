@@ -53993,29 +53993,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 221668379045370973, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
-      propertyPath: m_Radius
-      value: 0.4241066
-      objectReference: {fileID: 0}
-    - target: {fileID: 221668379045370973, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
-      propertyPath: m_Offset.x
-      value: 0.003221194
-      objectReference: {fileID: 0}
-    - target: {fileID: 221668379045370973, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
-      propertyPath: m_Offset.y
-      value: -0.45692396
-      objectReference: {fileID: 0}
     - target: {fileID: 2937140377104741910, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2937140377104741910, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.9
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2937140377104741910, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2937140377104741910, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -54060,10 +54048,6 @@ PrefabInstance:
     - target: {fileID: 6503425617983613220, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: sceneViewId
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7280105100535830341, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
