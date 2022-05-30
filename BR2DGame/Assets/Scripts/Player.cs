@@ -55,13 +55,15 @@ public class Player : MonoBehaviour
 
         Camera playerCam = playerCamera.GetComponent<Camera>();
         mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition); //Getting the coordinates of mouse cursor as world's point
-        headPosition.x = head.transform.position.x;
-        headPosition.y = head.transform.position.y;
-        firePointPosition.x = firePoint.transform.position.x;
-        firePointPosition.y = firePoint.transform.position.y;
-        firePointHeadDistance = Vector2.Distance(headPosition, firePointPosition);
-        mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
 
+        if (view.IsMine) {
+            headPosition.x = head.transform.position.x;
+            headPosition.y = head.transform.position.y;
+            firePointPosition.x = firePoint.transform.position.x;
+            firePointPosition.y = firePoint.transform.position.y;
+            firePointHeadDistance = Vector2.Distance(headPosition, firePointPosition);
+            mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
+        }
     }
 
     // Update is called once per frame
