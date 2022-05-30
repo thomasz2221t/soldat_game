@@ -17,21 +17,18 @@ public class Player : MonoBehaviour
     [SerializeField] private int health = 1000;
     private GameObject weapon;
     private GameObject head;
+    private Collider2D playerCollider;
+    //private GameObject AK;
+    //private GameObject pistol;
     private GameObject firePoint;
 
     private GameObject sceneCamera;
 
     public Vector2 inputPosition;
     public Vector2 mousePosition;
-    public Vector2 headPosition;
-    public Vector2 firePointPosition;
-    public float firePointHeadDistance;
-    public float mouseHeadDistance;
 
 
     // Start is called before the first frame update
-    //nice way to get child object by name
-    //GameObject firePoint = shooter.transform.Find("FirePoint").gameObject;
     void Start()
     {
         view = GetComponent<PhotonView>();
@@ -39,6 +36,9 @@ public class Player : MonoBehaviour
             sceneCamera = GameObject.Find("Main Camera");
             weapon = GameObject.Find("Weapon");
             head = GameObject.Find("Head");
+            //AK = GameObject.Find("AK");
+            //pistol = GameObject.Find("Pistol");
+            //pistol.SetActive(false);
             firePoint = GameObject.Find("FirePoint");
 
             sceneCamera.SetActive(false);
@@ -68,6 +68,18 @@ public class Player : MonoBehaviour
         {
             firePointHeadDistance = Vector2.Distance(headPosition, firePointPosition);
             mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
+        /*if (pickUpAllowed && Input.GetKeyDown(KeyCode.E)) {
+            Debug.Log(weaponIcon.name);
+            if(weaponIcon.name.Contains("smallPistol")) {
+                Debug.Log("Pisztolet znaleziony");
+                AK.SetActive(false);
+                pistol.SetActive(true);
+            } else if(weaponIcon.name.Contains("smallAK")) {
+                AK.SetActive(true);
+                pistol.SetActive(false);
+                Debug.Log("Akacz znaleziony");
+            }
+            Destroy(weaponIcon);*/
         }
     }
 
@@ -125,8 +137,38 @@ public class Player : MonoBehaviour
     {
         health -= damage;
 
-        if (health <= 0)
+        /*if (health <= 0)
         {
+            float lookDirX = mousePosition.x - AK.transform.position.x;
+            float lookDirY = mousePosition.y - AK.transform.position.y;
+            float currentAngle = playerRigidbody.rotation;
+            float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 95f; //95 degrees - offset, which should be changed after creating final player model
+
+            if (AK.activeInHierarchy) {
+                AK.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the ak, it should point to the local cursor
+            } else if (pistol.activeInHierarchy) {
+                pistol.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the pistol, it should point to the local cursor
+            }
+
+            //More elaborate way to smoothe the angle is written below. Should be used at a later time
+
+            /*float angleDiff = angle - currentAngle;
+            angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
+            angle = currentAngle + angleDiff;
+            float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
+        //}
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        if (collision.gameObject.tag.Equals("WeaponIcon")) {
+            pickUpAllowed = true;
+            weaponIcon = collision.gameObject;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision) {
+        if (collision.gameObject.tag.Equals("WeaponIcon")) {
+            pickUpAllowed = false;
         }
     }
 }

@@ -173,4 +173,3 @@ MonoBehaviour:
   destroyTime: 2
   damage: 15
   bulletForce: 20
-  pv: {fileID: 0}
