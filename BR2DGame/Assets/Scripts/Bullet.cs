@@ -32,7 +32,7 @@ public class Bullet : MonoBehaviourPun
     IEnumerator DestroyByTime()
     {
         yield return new WaitForSeconds(destroyTime);
-        this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
+        destroyBullet();
     }
 
     //Collisions
@@ -57,15 +57,14 @@ public class Bullet : MonoBehaviourPun
         if (hit)
         {
             StopCoroutine("DestroyByTime");
-            this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
+            destroyBullet();
         }
         
 
     }
 
-    [PunRPC]
     public void destroyBullet()
     {
-        Destroy(this.gameObject);
+        PhotonNetwork.Destroy(this.gameObject);
     }
 }
