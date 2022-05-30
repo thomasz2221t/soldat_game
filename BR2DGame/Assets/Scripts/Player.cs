@@ -120,6 +120,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    [PunRPC]
     public void TakeDamage(int damage)
     {
         health -= damage;
