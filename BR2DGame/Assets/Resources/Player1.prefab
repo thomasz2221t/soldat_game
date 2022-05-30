@@ -342,13 +342,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2939233901591589328}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.06, y: 1.61, z: 2.950943}
-  m_LocalScale: {x: 2.5149002, y: 11.954401, z: 3}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: -0.52166665, y: -0.024999937, z: 1}
+  m_LocalScale: {x: 0.83829993, y: 3.9847996, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7516401512421063364}
-  m_RootOrder: 1
+  m_Father: {fileID: 2937140377104741910}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3044172603404095746
 SpriteRenderer:
@@ -440,6 +440,7 @@ Transform:
   - {fileID: 654949054}
   - {fileID: 605388837}
   - {fileID: 7516401512421063364}
+  - {fileID: 2944748777981135792}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -515,6 +516,10 @@ MonoBehaviour:
   health: 1000
   inputPosition: {x: 0, y: 0}
   mousePosition: {x: 0, y: 0}
+  headPosition: {x: 0, y: 0}
+  firePointPosition: {x: 0, y: 0}
+  firePointHeadDistance: 0
+  mouseHeadDistance: 0
 --- !u!114 &6503425617983613220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -535,6 +540,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: -7413085783899347888}
+  - {fileID: 7896687632304093693}
   - {fileID: 700023449}
   - {fileID: 700023451}
   sceneViewId: 0
@@ -758,6 +764,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7516401512421063364}
   - component: {fileID: 314722072250821049}
+  - component: {fileID: 7896687632304093693}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -778,7 +785,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4873332527599275052}
-  - {fileID: 2944748777981135792}
   m_Father: {fileID: 2937140377104741910}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
@@ -834,3 +840,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7896687632304093693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8023167566971504355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
