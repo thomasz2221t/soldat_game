@@ -10,7 +10,6 @@ public class Bullet : MonoBehaviourPun
     [SerializeField] private float destroyTime = 2f;
     [SerializeField] private int damage = 15;
     [SerializeField] private float bulletForce = 20f;
-    [SerializeField] PhotonView pv;
 
     private Rigidbody2D bulletRigidBody;
 
@@ -19,7 +18,6 @@ public class Bullet : MonoBehaviourPun
 
     private void Start()
     {
-        pv = GetComponent<PhotonView>();
         bulletRigidBody = this.GetComponent<Rigidbody2D>(); 
         bulletRigidBody.AddForce(this.transform.up * bulletForce, ForceMode2D.Impulse); //Adding force to the bullet, making it move
     }
@@ -38,29 +36,18 @@ public class Bullet : MonoBehaviourPun
     //Collisions
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        bool hit = false;
+        if (collision.gameObject.tag == "WeaponIcon") { // if collider's tag is equal to "WeaponIcon" then ignore the collision 
+            Physics2D.IgnoreCollision(collision.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>()); 
+            return;
+        }
+
         Box destroyable = collision.GetComponent<Box>();
-        Player playerBody = collision.GetComponent<Player>();
 
         if (destroyable != null)
         {
             destroyable.TakeDamage(damage);
-            hit = true;
         }
-
-        if((playerBody != null)&&(!collision.gameObject.GetPhotonView().IsMine))
-        {
-            playerBody.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, damage);
-            hit = true;
-        }
-
-        if (hit)
-        {
-            StopCoroutine("DestroyByTime");
-            this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
-        }
-        
-
+        Destroy(gameObject);
     }
 
     [PunRPC]
