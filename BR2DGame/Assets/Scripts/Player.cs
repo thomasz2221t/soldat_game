@@ -14,18 +14,11 @@ public class Player : MonoBehaviour
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
 
-    private Collider2D playerCollider;
-    private GameObject AK;
-    private GameObject pistol;
-
-
     [SerializeField] private int health = 1000;
     private GameObject weapon;
     private GameObject head;
-
     private GameObject firePoint;
 
-    private Camera playerCam;
     private GameObject sceneCamera;
 
     public Vector2 inputPosition;
@@ -34,9 +27,6 @@ public class Player : MonoBehaviour
     public Vector2 firePointPosition;
     public float firePointHeadDistance;
     public float mouseHeadDistance;
-
-    private bool pickUpAllowed;
-    private GameObject weaponIcon;
 
 
     // Start is called before the first frame update
@@ -47,20 +37,12 @@ public class Player : MonoBehaviour
         view = GetComponent<PhotonView>();
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
-
-            AK = GameObject.Find("AK");
-            pistol = GameObject.Find("Pistol");
-            pistol.SetActive(false);
-
             weapon = GameObject.Find("Weapon");
             head = GameObject.Find("Head");
-
             firePoint = GameObject.Find("FirePoint");
 
             sceneCamera.SetActive(false);
             playerCamera.SetActive(true);
-            playerCollider = GetComponent<Collider2D>();
-            playerCam = playerCamera.GetComponent<Camera>();
         }
         Debug.Log(view.Owner.NickName);
         playerName.text = view.Owner.NickName;
@@ -71,21 +53,8 @@ public class Player : MonoBehaviour
         inputPosition.x = Input.GetAxis("Horizontal");
         inputPosition.y = Input.GetAxis("Vertical");
 
+        Camera playerCam = playerCamera.GetComponent<Camera>();
         mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition); //Getting the coordinates of mouse cursor as world's point
-
-
-        if (pickUpAllowed && Input.GetKeyDown(KeyCode.E)) {
-            Debug.Log(weaponIcon.name);
-            if(weaponIcon.name.Contains("smallPistol")) {
-                Debug.Log("Pisztolet znaleziony");
-                AK.SetActive(false);
-                pistol.SetActive(true);
-            } else if(weaponIcon.name.Contains("smallAK")) {
-                AK.SetActive(true);
-                pistol.SetActive(false);
-                Debug.Log("Akacz znaleziony");
-            }
-            Destroy(weaponIcon);
 
         if(head != null) {
             headPosition.x = head.transform.position.x;
@@ -99,7 +68,6 @@ public class Player : MonoBehaviour
         {
             firePointHeadDistance = Vector2.Distance(headPosition, firePointPosition);
             mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
-
         }
     }
 
@@ -112,7 +80,6 @@ public class Player : MonoBehaviour
             playerRigidbody.MovePosition(playerRigidbody.position + inputPosition * speed * Time.fixedDeltaTime);
 
             //Character rotation
-
             float lookDirX = 0.0f;
             float lookDirY = 0.0f;
 
@@ -160,20 +127,6 @@ public class Player : MonoBehaviour
 
         if (health <= 0)
         {
-
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.gameObject.tag.Equals("WeaponIcon")) {
-            pickUpAllowed = true;
-            weaponIcon = collision.gameObject;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision) {
-        if (collision.gameObject.tag.Equals("WeaponIcon")) {
-            pickUpAllowed = false;
         }
     }
 }
