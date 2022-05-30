@@ -13,9 +13,16 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
+
     private Collider2D playerCollider;
     private GameObject AK;
     private GameObject pistol;
+
+
+    [SerializeField] private int health = 1000;
+    private GameObject weapon;
+    private GameObject head;
+
     private GameObject firePoint;
 
     private Camera playerCam;
@@ -23,20 +30,31 @@ public class Player : MonoBehaviour
 
     public Vector2 inputPosition;
     public Vector2 mousePosition;
+    public Vector2 headPosition;
+    public Vector2 firePointPosition;
+    public float firePointHeadDistance;
+    public float mouseHeadDistance;
 
     private bool pickUpAllowed;
     private GameObject weaponIcon;
 
 
     // Start is called before the first frame update
+    //nice way to get child object by name
+    //GameObject firePoint = shooter.transform.Find("FirePoint").gameObject;
     void Start()
     {
         view = GetComponent<PhotonView>();
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
+
             AK = GameObject.Find("AK");
             pistol = GameObject.Find("Pistol");
             pistol.SetActive(false);
+
+            weapon = GameObject.Find("Weapon");
+            head = GameObject.Find("Head");
+
             firePoint = GameObject.Find("FirePoint");
 
             sceneCamera.SetActive(false);
@@ -55,6 +73,7 @@ public class Player : MonoBehaviour
 
         mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition); //Getting the coordinates of mouse cursor as world's point
 
+
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E)) {
             Debug.Log(weaponIcon.name);
             if(weaponIcon.name.Contains("smallPistol")) {
@@ -67,6 +86,20 @@ public class Player : MonoBehaviour
                 Debug.Log("Akacz znaleziony");
             }
             Destroy(weaponIcon);
+
+        if(head != null) {
+            headPosition.x = head.transform.position.x;
+            headPosition.y = head.transform.position.y;
+        }
+        if(firePoint != null) {
+            firePointPosition.x = firePoint.transform.position.x;
+            firePointPosition.y = firePoint.transform.position.y;
+        }
+        if ((head != null) && (firePoint != null))
+        {
+            firePointHeadDistance = Vector2.Distance(headPosition, firePointPosition);
+            mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
+
         }
     }
 
@@ -79,23 +112,55 @@ public class Player : MonoBehaviour
             playerRigidbody.MovePosition(playerRigidbody.position + inputPosition * speed * Time.fixedDeltaTime);
 
             //Character rotation
-            float lookDirX = mousePosition.x - AK.transform.position.x;
-            float lookDirY = mousePosition.y - AK.transform.position.y;
-            float currentAngle = playerRigidbody.rotation;
-            float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 95f; //95 degrees - offset, which should be changed after creating final player model
 
-            if (AK.activeInHierarchy) {
-                AK.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the ak, it should point to the local cursor
-            } else if (pistol.activeInHierarchy) {
-                pistol.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the pistol, it should point to the local cursor
+            float lookDirX = 0.0f;
+            float lookDirY = 0.0f;
+
+            //Precise aiming rotation (long range)
+            if ((mouseHeadDistance-4.0f) > (firePointHeadDistance))
+            {
+                Debug.Log("Firepoint");
+                lookDirX = mousePosition.x - firePoint.transform.position.x;
+                lookDirY = mousePosition.y - firePoint.transform.position.y;
+                float currentAngle = playerRigidbody.rotation;
+                float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 90; //95 degrees - offset, which should be changed after creating final player model
+                head.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the weapon, it should point to the local cursor
+
+                //More elaborate way to smoothe the angle is written below. Should be used at a later time
+
+                /*float angleDiff = angle - currentAngle;
+                angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
+                angle = currentAngle + angleDiff;
+                float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
+            }
+            //From hibs aiming rotation (close range)
+            else if(mouseHeadDistance != firePointHeadDistance)
+            {
+                lookDirX = mousePosition.x - head.transform.position.x;
+                lookDirY = mousePosition.y - head.transform.position.y;
+                float currentAngle = playerRigidbody.rotation;
+                float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 85; //87 degrees - offset, which should be changed after creating final player model
+                head.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the weapon, it should point to the local cursor
+
+                //More elaborate way to smoothe the angle is written below. Should be used at a later time
+
+                /*float angleDiff = angle - currentAngle;
+                angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
+                angle = currentAngle + angleDiff;
+                float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
             }
 
-            //More elaborate way to smoothe the angle is written below. Should be used at a later time
+        }
+    }
 
-            /*float angleDiff = angle - currentAngle;
-            angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
-            angle = currentAngle + angleDiff;
-            float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
+    [PunRPC]
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+
         }
     }
 
