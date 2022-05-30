@@ -1045,12 +1045,12 @@ GameObject:
   - component: {fileID: 952983562}
   - component: {fileID: 700023449}
   m_Layer: 0
-  m_Name: Player1
+  m_Name: OldPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2937140377104741910
 Transform:
   m_ObjectHideFlags: 0
