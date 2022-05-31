@@ -17,7 +17,7 @@ public class Box : MonoBehaviour
         if(health <= 0)
         {
             dropItems();
-            Die();
+            this.GetComponent<PhotonView>().RPC("destroyBox", RpcTarget.AllBuffered);
         }
     }
 
@@ -34,8 +34,8 @@ public class Box : MonoBehaviour
         }
     }
 
-    private void Die()
-    {
-        PhotonNetwork.Destroy(gameObject);
+    [PunRPC]
+    public void destroyBox() {
+        Destroy(this.gameObject);
     }
 }

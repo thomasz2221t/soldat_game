@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject playerCamera;
 
     [SerializeField] private int health = 1000;
-    private GameObject weapon; //ak
+    private GameObject ak; //ak
     private GameObject head;
     private GameObject akFirePoint; //akFirePoint
     private GameObject firePoint;
@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
         view = GetComponent<PhotonView>();
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
-            weapon = GameObject.Find("Weapon");
+            ak = GameObject.Find("Weapon");
             head = GameObject.Find("Head");
             akFirePoint = GameObject.Find("FirePoint"); // akFirePoint
             pistol = GameObject.Find("Pistol");
@@ -64,6 +64,9 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (!view.IsMine)
+            return;
+
         inputPosition.x = Input.GetAxis("Horizontal");
         inputPosition.y = Input.GetAxis("Vertical");
 
@@ -73,22 +76,9 @@ public class Player : MonoBehaviour
         //Picking up items
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E)) {
             Debug.Log(weaponSymbol.name);
-            if (weaponSymbol.name.Contains("pistol")) {
-                Debug.Log("Pisztolet znaleziony");
-                weapon.SetActive(false);
-                pistol.SetActive(true);
-                isHoldingAk = false;
-                firePoint = pistolFirePoint;
-            }
-            else if (weaponSymbol.name.Contains("ak")) {
-                Debug.Log("Akacz znaleziony");
-                weapon.SetActive(true);
-                pistol.SetActive(false);
-                isHoldingAk = true;
-                firePoint = akFirePoint;
-            }
-
-            PhotonNetwork.Destroy(weaponSymbol);
+            equipWeapon(weaponSymbol.name);
+            this.GetComponent<PhotonView>().RPC("equipWeapon", RpcTarget.OthersBuffered, weaponSymbol.name);
+            this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.AllBuffered);
         }
 
         if (head != null) {
@@ -121,7 +111,7 @@ public class Player : MonoBehaviour
             //Precise aiming rotation (long range)
             if ((mouseHeadDistance-4.0f) > (firePointHeadDistance))
             {
-                Debug.Log("Firepoint");
+                //Debug.Log("Firepoint");
                 lookDirX = mousePosition.x - firePoint.transform.position.x;
                 lookDirY = mousePosition.y - firePoint.transform.position.y;
                 float currentAngle = playerRigidbody.rotation;
@@ -176,5 +166,28 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag.Equals("WeaponSymbol")) {
             pickUpAllowed = false;
         }
+    }
+
+    [PunRPC]
+    public void equipWeapon(string weaponName) {
+        if (weaponName.Contains("pistol")) {
+            Debug.Log("Pisztolet znaleziony");
+            ak.SetActive(false);
+            pistol.SetActive(true);
+            isHoldingAk = false;
+            firePoint = pistolFirePoint;
+        }
+        else if (weaponName.Contains("ak")) {
+            Debug.Log("Akacz znaleziony");
+            ak.SetActive(true);
+            pistol.SetActive(false);
+            isHoldingAk = true;
+            firePoint = akFirePoint;
+        }
+    }
+
+    [PunRPC]
+    public void destroyWeaponSymbol() {
+        Destroy(weaponSymbol);
     }
 }
