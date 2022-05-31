@@ -15,9 +15,13 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject playerCamera;
 
     [SerializeField] private int health = 1000;
-    private GameObject weapon;
+    private GameObject weapon; //ak
     private GameObject head;
+    private GameObject akFirePoint; //akFirePoint
     private GameObject firePoint;
+    private GameObject pistol;
+    private GameObject pistolFirePoint;
+    private GameObject weaponSymbol;
 
     private GameObject sceneCamera;
 
@@ -27,6 +31,9 @@ public class Player : MonoBehaviour
     public Vector2 firePointPosition;
     public float firePointHeadDistance;
     public float mouseHeadDistance;
+
+    private bool isHoldingAk = true;
+    private bool pickUpAllowed = false;
 
 
     // Start is called before the first frame update
@@ -39,7 +46,14 @@ public class Player : MonoBehaviour
             sceneCamera = GameObject.Find("Main Camera");
             weapon = GameObject.Find("Weapon");
             head = GameObject.Find("Head");
-            firePoint = GameObject.Find("FirePoint");
+            akFirePoint = GameObject.Find("FirePoint"); // akFirePoint
+            pistol = GameObject.Find("Pistol");
+            pistolFirePoint = GameObject.Find("PistolFirePoint");
+
+            if (isHoldingAk) {
+                pistol.SetActive(false);
+                firePoint = akFirePoint;
+            }
 
             sceneCamera.SetActive(false);
             playerCamera.SetActive(true);
@@ -56,7 +70,28 @@ public class Player : MonoBehaviour
         Camera playerCam = playerCamera.GetComponent<Camera>();
         mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition); //Getting the coordinates of mouse cursor as world's point
 
-        if(head != null) {
+        //Picking up items
+        if (pickUpAllowed && Input.GetKeyDown(KeyCode.E)) {
+            Debug.Log(weaponSymbol.name);
+            if (weaponSymbol.name.Contains("pistol")) {
+                Debug.Log("Pisztolet znaleziony");
+                weapon.SetActive(false);
+                pistol.SetActive(true);
+                isHoldingAk = false;
+                firePoint = pistolFirePoint;
+            }
+            else if (weaponSymbol.name.Contains("ak")) {
+                Debug.Log("Akacz znaleziony");
+                weapon.SetActive(true);
+                pistol.SetActive(false);
+                isHoldingAk = true;
+                firePoint = akFirePoint;
+            }
+
+            PhotonNetwork.Destroy(weaponSymbol);
+        }
+
+        if (head != null) {
             headPosition.x = head.transform.position.x;
             headPosition.y = head.transform.position.y;
         }
@@ -127,6 +162,19 @@ public class Player : MonoBehaviour
 
         if (health <= 0)
         {
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        if (collision.gameObject.tag.Equals("WeaponSymbol")) {
+            pickUpAllowed = true;
+            weaponSymbol = collision.gameObject;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision) {
+        if (collision.gameObject.tag.Equals("WeaponSymbol")) {
+            pickUpAllowed = false;
         }
     }
 }
