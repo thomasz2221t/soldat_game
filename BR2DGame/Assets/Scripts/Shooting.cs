@@ -11,6 +11,9 @@ public class Shooting : MonoBehaviour
     [SerializeField] static private float shotCooldown = 0.1f;
     [SerializeField] private int magazineSize = 30;
 
+    [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
+    [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
+
     float timeStamp = 0;
     float timeStamp2 = 0;
 
@@ -24,7 +27,7 @@ public class Shooting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButton("Fire1")&& pv.IsMine)
+        if (ak.activeInHierarchy && Input.GetButton("Fire1")&& pv.IsMine)
         {
             if((timeStamp <= Time.time)&&(magazineSize>0))
             {
@@ -43,6 +46,11 @@ public class Shooting : MonoBehaviour
                 }
             }
         }
+        else if(pistol.activeInHierarchy && Input.GetButtonDown("Fire1") && pv.IsMine)
+        {
+            Shoot();
+        }
+
     }
 
     //function realizing releasing the bullet from barell
