@@ -151,8 +151,10 @@ public class Player : MonoBehaviour
     {
         health -= damage;
 
-        if (health <= 0)
-        {
+        if (health <= 0) {
+            if(view.IsMine)
+                PhotonNetwork.LoadLevel("Dead");
+            Destroy(this.gameObject);
         }
     }
 
