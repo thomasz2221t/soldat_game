@@ -7,6 +7,7 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private int health = 1000;
     [SerializeField] private float speed = 50;
     [SerializeField] PhotonView view;
     [SerializeField] TMP_Text playerName;
@@ -14,14 +15,15 @@ public class Player : MonoBehaviour
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
 
-    [SerializeField] private int health = 1000;
-    private GameObject ak; //ak
-    private GameObject head;
-    private GameObject akFirePoint; //akFirePoint
-    private GameObject firePoint;
-    private GameObject pistol;
-    private GameObject pistolFirePoint;
+    [SerializeField] private GameObject akSymbolPrefab;
+    [SerializeField] private GameObject pistolSymbolPrefab;
+    [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
+    [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
     private GameObject weaponSymbol;
+    private GameObject firePoint;
+    private GameObject akFirePoint; 
+    private GameObject pistolFirePoint;
+    private GameObject head;
 
     private GameObject sceneCamera;
 
@@ -44,10 +46,8 @@ public class Player : MonoBehaviour
         view = GetComponent<PhotonView>();
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
-            ak = GameObject.Find("Weapon");
             head = GameObject.Find("Head");
             akFirePoint = GameObject.Find("FirePoint"); // akFirePoint
-            pistol = GameObject.Find("Pistol");
             pistolFirePoint = GameObject.Find("PistolFirePoint");
 
             if (isHoldingAk) {
@@ -73,14 +73,16 @@ public class Player : MonoBehaviour
         Camera playerCam = playerCamera.GetComponent<Camera>();
         mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition); //Getting the coordinates of mouse cursor as world's point
 
-        //Picking up items
+        //Picking up items from the ground and dropping the weapon that the player is currently holding
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E)) {
             Debug.Log(weaponSymbol.name);
             equipWeapon(weaponSymbol.name);
             this.GetComponent<PhotonView>().RPC("equipWeapon", RpcTarget.OthersBuffered, weaponSymbol.name);
             this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.AllBuffered);
+
         }
 
+        //Getting positions for the player rotation
         if (head != null) {
             headPosition.x = head.transform.position.x;
             headPosition.y = head.transform.position.y;
@@ -111,7 +113,6 @@ public class Player : MonoBehaviour
             //Precise aiming rotation (long range)
             if ((mouseHeadDistance-4.0f) > (firePointHeadDistance))
             {
-                //Debug.Log("Firepoint");
                 lookDirX = mousePosition.x - firePoint.transform.position.x;
                 lookDirY = mousePosition.y - firePoint.transform.position.y;
                 float currentAngle = playerRigidbody.rotation;
@@ -125,7 +126,7 @@ public class Player : MonoBehaviour
                 angle = currentAngle + angleDiff;
                 float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
             }
-            //From hibs aiming rotation (close range)
+            //From hips aiming rotation (close range)
             else if(mouseHeadDistance != firePointHeadDistance)
             {
                 lookDirX = mousePosition.x - head.transform.position.x;
@@ -174,15 +175,27 @@ public class Player : MonoBehaviour
             Debug.Log("Pisztolet znaleziony");
             ak.SetActive(false);
             pistol.SetActive(true);
-            isHoldingAk = false;
             firePoint = pistolFirePoint;
+            dropCurrentWeapon(isHoldingAk);
+            isHoldingAk = false;
+
         }
         else if (weaponName.Contains("ak")) {
             Debug.Log("Akacz znaleziony");
             ak.SetActive(true);
             pistol.SetActive(false);
-            isHoldingAk = true;
             firePoint = akFirePoint;
+            dropCurrentWeapon(isHoldingAk);
+            isHoldingAk = true;
+        }
+    }
+
+    public void dropCurrentWeapon(bool wasHoldingAK) {
+        if (view.IsMine) {
+            if (wasHoldingAK)
+                PhotonNetwork.Instantiate(akSymbolPrefab.name, this.transform.position, this.transform.rotation);
+            else
+                PhotonNetwork.Instantiate(pistolSymbolPrefab.name, this.transform.position, this.transform.rotation);
         }
     }
 
