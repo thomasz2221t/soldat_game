@@ -631,16 +631,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55e471e087057b9408f7132186bfec1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 1000
   speed: 20
   view: {fileID: 0}
   playerName: {fileID: 654949055}
   playerRigidbody: {fileID: 952983562}
   playerCamera: {fileID: 605388836}
-  health: 1000
-  ak: {fileID: 7280105100535830341}
-  pistol: {fileID: 2661719255895218339}
   akSymbolPrefab: {fileID: 8862685645483659192, guid: 53ecaa8c44838f94795c56c34a50f1be, type: 3}
   pistolSymbolPrefab: {fileID: 150354949496728278, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
+  ak: {fileID: 7280105100535830341}
+  pistol: {fileID: 2661719255895218339}
   inputPosition: {x: 0, y: 0}
   mousePosition: {x: 0, y: 0}
   headPosition: {x: 0, y: 0}
@@ -723,6 +723,8 @@ MonoBehaviour:
   firePoint: {fileID: 2571835467008889865}
   bulletPrefab: {fileID: 7852711942540484104, guid: f3497a9acd763ae40849c51c35e2123c, type: 3}
   magazineSize: 30
+  ak: {fileID: 7280105100535830341}
+  pistol: {fileID: 2661719255895218339}
 --- !u!50 &952983562
 Rigidbody2D:
   serializedVersion: 4
