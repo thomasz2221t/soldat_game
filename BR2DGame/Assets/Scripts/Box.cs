@@ -6,6 +6,9 @@ using Photon.Pun;
 public class Box : MonoBehaviour
 {
     [SerializeField] private int health = 100;
+    [SerializeField] private GameObject akPrefab;
+    [SerializeField] private GameObject pistolPrefab;
+    private int dropNumber;
 
     public void TakeDamage(int damage)
     {
@@ -13,12 +16,26 @@ public class Box : MonoBehaviour
 
         if(health <= 0)
         {
-            Die();
+            dropItems();
+            this.GetComponent<PhotonView>().RPC("destroyBox", RpcTarget.AllBuffered);
         }
     }
 
-    private void Die()
-    {
-        PhotonNetwork.Destroy(gameObject);
+    //Drop items after the box is destroyed
+    private void dropItems() {
+        dropNumber = Random.Range(1, 3);
+        switch (dropNumber) {
+            case 1:
+                PhotonNetwork.Instantiate(pistolPrefab.name, this.transform.position, this.transform.rotation);
+                break;
+            case 2:
+                PhotonNetwork.Instantiate(akPrefab.name, this.transform.position, this.transform.rotation);
+                break;
+        }
+    }
+
+    [PunRPC]
+    public void destroyBox() {
+        Destroy(this.gameObject);
     }
 }
