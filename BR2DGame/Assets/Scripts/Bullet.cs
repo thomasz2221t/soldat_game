@@ -40,6 +40,7 @@ public class Bullet : MonoBehaviourPun
     {
         bool hit = false;
         Box destroyable = collision.GetComponent<Box>();
+        Barrel barrel = collision.GetComponent<Barrel>();
         Player playerBody = collision.GetComponent<Player>();
 
         if (destroyable != null)
@@ -48,7 +49,12 @@ public class Bullet : MonoBehaviourPun
             hit = true;
         }
 
-        if((playerBody != null)&&(!collision.gameObject.GetPhotonView().IsMine))
+        if(barrel != null) {
+            barrel.TakeDamage(damage);
+            hit = true;
+        }
+
+        if ((playerBody != null)&&(!collision.gameObject.GetPhotonView().IsMine))
         {
             playerBody.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, damage);
             hit = true;
