@@ -8,7 +8,7 @@ public class Bullet : MonoBehaviourPun
 {
     [SerializeField] private GameObject shooter;
     [SerializeField] private float destroyTime = 2f;
-    [SerializeField] private int damage = 15;
+    [SerializeField] private float damage = 15;
     [SerializeField] private float bulletForce = 20f;
     [SerializeField] PhotonView pv;
 

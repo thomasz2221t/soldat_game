@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class Barrel : MonoBehaviour
 {
-    [SerializeField] private int health = 100;
+    [SerializeField] private float health = 100;
     [SerializeField] private float splashRange;
     [SerializeField] private float damage = 100;
 
 
-    public void TakeDamage(int damage) {
+    public void TakeDamage(float damage) {
         health -= damage;
 
         if (health <= 0) {
@@ -32,7 +32,7 @@ public class Barrel : MonoBehaviour
                 //var distance = Vector3.Distance(hitCollider.ClosestPoint(transform.position), transform.position);
                 //Debug.Log("distance: " + distance);
                 //var damagePercent = Mathf.InverseLerp(0, splashRange, distance);
-                player.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, 100);
+                player.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, 100.00f);
                 //Debug.Log("all: " + damagePercent * damage * 100);
                 //Debug.Log("dmg: " + damage);
                 //Debug.Log("dmg prc: " + damagePercent);

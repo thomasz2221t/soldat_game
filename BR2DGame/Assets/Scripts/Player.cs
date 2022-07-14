@@ -7,7 +7,13 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private int health = 1000;
+    [SerializeField] private float health = 1000;
+    private float maxHealth;
+    [SerializeField] Image healthbarImage;
+    [SerializeField] GameObject ui;
+    //private int currentHealth;
+    //public HealthBar healthBar;
+
     [SerializeField] private float speed = 50;
     [SerializeField] PhotonView view;
     [SerializeField] TMP_Text playerName;
@@ -44,6 +50,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         view = GetComponent<PhotonView>();
+        maxHealth = health;
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
             head = GameObject.Find("Head");
@@ -57,6 +64,8 @@ public class Player : MonoBehaviour
 
             sceneCamera.SetActive(false);
             playerCamera.SetActive(true);
+        } else {
+            Destroy(ui);
         }
         Debug.Log(view.Owner.NickName);
         playerName.text = view.Owner.NickName;
@@ -147,9 +156,11 @@ public class Player : MonoBehaviour
     }
 
     [PunRPC]
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         health -= damage;
+        healthbarImage.fillAmount = health / maxHealth;
+        Debug.Log("Health: " + health + " maxHealth: " + maxHealth + " divided: " + health / maxHealth);
 
         if (health <= 0) {
             if(view.IsMine)

@@ -5,12 +5,12 @@ using Photon.Pun;
 
 public class Box : MonoBehaviour
 {
-    [SerializeField] private int health = 100;
+    [SerializeField] private float health = 100;
     [SerializeField] private GameObject akPrefab;
     [SerializeField] private GameObject pistolPrefab;
     private int dropNumber;
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         health -= damage;
 
