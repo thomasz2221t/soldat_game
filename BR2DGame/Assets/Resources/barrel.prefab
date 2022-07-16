@@ -118,6 +118,7 @@ MonoBehaviour:
   health: 100
   splashRange: 7
   damage: 100
+  animationPrefab: {fileID: 139366, guid: b185c1a9cf067374586d095111b15bd1, type: 3}
 --- !u!114 &1910396963419988958
 MonoBehaviour:
   m_ObjectHideFlags: 0

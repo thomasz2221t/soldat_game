@@ -48,6 +48,8 @@ MonoBehaviour:
   - destroyWeaponSymbol
   - equipWeapon
   - destroyBarrel
+  - destroyAnimation
+  - animationDestructionWithPhoton
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -8,7 +8,9 @@ public class Barrel : MonoBehaviour
     [SerializeField] private float health = 100;
     [SerializeField] private float splashRange;
     [SerializeField] private float damage = 100;
+    [SerializeField] private GameObject animationPrefab;
 
+    int animationCounter = 1;
 
     public void TakeDamage(float damage) {
         health -= damage;
@@ -22,7 +24,7 @@ public class Barrel : MonoBehaviour
     public void explode() {
         //Debug.Log("inside explode");
         var hitColliders = Physics2D.OverlapCircleAll(transform.position, splashRange);
-        foreach(var hitCollider in hitColliders) {
+        foreach (var hitCollider in hitColliders) {
             Player player = hitCollider.GetComponent<Player>();
             //Debug.Log("inside foreach");
             if (player) {
@@ -42,7 +44,14 @@ public class Barrel : MonoBehaviour
     }
 
     [PunRPC]
-    public void destroyBarrel() {
+    public void destroyBarrel() 
+    {
+        barrelExplosion();
         Destroy(this.gameObject);
+    }
+
+    public void barrelExplosion()
+    {
+        GameObject explosionAnimation = PhotonNetwork.Instantiate(animationPrefab.name,this.transform.position, this.transform.rotation);
     }
 }
