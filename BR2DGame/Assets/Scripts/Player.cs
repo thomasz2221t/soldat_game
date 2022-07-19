@@ -158,10 +158,11 @@ public class Player : MonoBehaviour
     [PunRPC]
     public void TakeDamage(float damage)
     {
-        health -= damage;
-        healthbarImage.fillAmount = health / maxHealth;
-        Debug.Log("Health: " + health + " maxHealth: " + maxHealth + " divided: " + health / maxHealth);
-
+        if (view.IsMine) {
+            health -= damage;
+            healthbarImage.fillAmount = health / maxHealth;
+            Debug.Log("Health: " + health + " maxHealth: " + maxHealth + " divided: " + health / maxHealth);
+        }
         if (health <= 0) {
             if(view.IsMine)
                 PhotonNetwork.LoadLevel("Dead");
