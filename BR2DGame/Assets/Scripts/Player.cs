@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject pistolSymbolPrefab;
     [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
     [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
+    private uint ammoCount = 0;
     private GameObject weaponSymbol;
     private GameObject firePoint;
     private GameObject akFirePoint; 
@@ -217,4 +218,5 @@ public class Player : MonoBehaviour
     public void destroyWeaponSymbol() {
         Destroy(weaponSymbol);
     }
+
 }

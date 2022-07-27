@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviourPun
     [SerializeField] private GameObject shooter;
     [SerializeField] private float destroyTime = 2f;
     [SerializeField] private float damage = 15;
-    [SerializeField] private float bulletForce = 20f;
+    [SerializeField] private float bulletForce = 50f;
     [SerializeField] PhotonView pv;
 
     private Rigidbody2D bulletRigidBody;

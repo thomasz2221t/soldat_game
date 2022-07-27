@@ -8,7 +8,11 @@ public class Box : MonoBehaviour
     [SerializeField] private float health = 100;
     [SerializeField] private GameObject akPrefab;
     [SerializeField] private GameObject pistolPrefab;
-    private int dropNumber;
+    [SerializeField] private GameObject ammoPrefab1;
+    [SerializeField] private GameObject ammoPrefab2;
+    [SerializeField] private GameObject ammoPrefab3;
+    private int dropNumberWeapon;
+    private int dropNumberAmmo;
 
     public void TakeDamage(float damage)
     {
@@ -23,13 +27,27 @@ public class Box : MonoBehaviour
 
     //Drop items after the box is destroyed
     private void dropItems() {
-        dropNumber = Random.Range(1, 3);
-        switch (dropNumber) {
+        dropNumberWeapon = Random.Range(1, 4);
+        switch (dropNumberWeapon) {
             case 1:
                 PhotonNetwork.Instantiate(pistolPrefab.name, this.transform.position, this.transform.rotation);
                 break;
             case 2:
                 PhotonNetwork.Instantiate(akPrefab.name, this.transform.position, this.transform.rotation);
+                break;
+        }
+
+        Vector3 newPos = new Vector3(this.transform.position.x + 2, this.transform.position.y + 2, this.transform.position.z + 2 );
+        dropNumberAmmo = Random.Range(1, 6);
+        switch (dropNumberAmmo) {
+            case 1:
+                PhotonNetwork.Instantiate(ammoPrefab1.name, newPos, this.transform.rotation);
+                break;
+            case 2:
+                PhotonNetwork.Instantiate(ammoPrefab2.name, newPos, this.transform.rotation);
+                break;
+            case 3:
+                PhotonNetwork.Instantiate(ammoPrefab3.name, newPos, this.transform.rotation);
                 break;
         }
     }

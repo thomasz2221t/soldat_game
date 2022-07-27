@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7852711942540484102
 Transform:
   m_ObjectHideFlags: 0
@@ -172,5 +172,5 @@ MonoBehaviour:
   shooter: {fileID: 2939666525252459142, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
   destroyTime: 2
   damage: 15
-  bulletForce: 20
+  bulletForce: 30
   pv: {fileID: 0}
