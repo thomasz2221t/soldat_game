@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Bullet
   - WeaponSymbol
+  - AmmoSymbol2
+  - AmmoSymbol3
+  - AmmoSymbol1
   layers:
   - Default
   - TransparentFX

@@ -17,6 +17,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed = 50;
     [SerializeField] PhotonView view;
     [SerializeField] TMP_Text playerName;
+    [SerializeField] TMP_Text ammoCountText1;
+    [SerializeField] TMP_Text ammoCountText2;
+    [SerializeField] TMP_Text ammoCountText3;
 
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
@@ -25,8 +28,11 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject pistolSymbolPrefab;
     [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
     [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
-    private uint ammoCount = 0;
+    private uint ammoCount1 = 0;
+    private uint ammoCount2 = 0;
+    private uint ammoCount3 = 0;
     private GameObject weaponSymbol;
+    private GameObject ammoSymbol;
     private GameObject firePoint;
     private GameObject akFirePoint; 
     private GameObject pistolFirePoint;
@@ -106,6 +112,10 @@ public class Player : MonoBehaviour
             firePointHeadDistance = Vector2.Distance(headPosition, firePointPosition);
             mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
         }
+
+        ammoCountText1.text = ammoCount1.ToString();
+        ammoCountText2.text = ammoCount2.ToString();
+        ammoCountText3.text = ammoCount3.ToString();
     }
 
     // Update is called once per frame
@@ -175,6 +185,20 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag.Equals("WeaponSymbol")) {
             pickUpAllowed = true;
             weaponSymbol = collision.gameObject;
+        } else if (collision.gameObject.tag.Equals("AmmoSymbol1") || collision.gameObject.tag.Equals("AmmoSymbol2") || collision.gameObject.tag.Equals("AmmoSymbol3")) {
+            ammoSymbol = collision.gameObject;
+            Debug.Log(collision.gameObject.name);
+            if(collision.gameObject.tag.Equals("AmmoSymbol1")) {
+                ammoCount1 += 30;
+                Debug.Log(ammoCount1);
+            } else if(collision.gameObject.tag.Equals("AmmoSymbol2")) {
+                ammoCount2 += 30;
+                Debug.Log(ammoCount3);
+            } else if(collision.gameObject.tag.Equals("AmmoSymbol3")) {
+                ammoCount3 += 30;
+                Debug.Log(ammoCount3);
+            }
+            this.GetComponent<PhotonView>().RPC("destroyAmmoSymbol", RpcTarget.AllBuffered);
         }
     }
 
@@ -217,6 +241,11 @@ public class Player : MonoBehaviour
     [PunRPC]
     public void destroyWeaponSymbol() {
         Destroy(weaponSymbol);
+    }
+
+    [PunRPC]
+    public void destroyAmmoSymbol() {
+        Destroy(ammoSymbol);
     }
 
 }

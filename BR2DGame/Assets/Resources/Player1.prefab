@@ -1517,7 +1517,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2937140377104741910
 Transform:
   m_ObjectHideFlags: 0
@@ -1608,6 +1608,9 @@ MonoBehaviour:
   speed: 15
   view: {fileID: 0}
   playerName: {fileID: 654949055}
+  ammoCountText1: {fileID: 1118737994}
+  ammoCountText2: {fileID: 1907488881}
+  ammoCountText3: {fileID: 1269669809}
   playerRigidbody: {fileID: 952983562}
   playerCamera: {fileID: 605388836}
   akSymbolPrefab: {fileID: 8862685645483659192, guid: 53ecaa8c44838f94795c56c34a50f1be, type: 3}

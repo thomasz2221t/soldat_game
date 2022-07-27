@@ -54567,10 +54567,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player1
       objectReference: {fileID: 0}
-    - target: {fileID: 2939666525252459142, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6503425617983613220, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: sceneViewId
       value: 5
@@ -55669,15 +55665,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1621076209620710249, guid: aa4ee516d85f5a4499888b096160eb3f, type: 3}
       propertyPath: sceneViewId
-      value: 18
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5578416158091996286, guid: aa4ee516d85f5a4499888b096160eb3f, type: 3}
       propertyPath: m_Name
       value: ammoSymbol1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5578416158091996286, guid: aa4ee516d85f5a4499888b096160eb3f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa4ee516d85f5a4499888b096160eb3f, type: 3}
@@ -55771,7 +55763,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4831448538762281000, guid: 8655f997f9238d3478893f4e76194521, type: 3}
       propertyPath: sceneViewId
-      value: 20
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 4831448538762281002, guid: 8655f997f9238d3478893f4e76194521, type: 3}
       propertyPath: m_RootOrder
@@ -55820,10 +55812,6 @@ PrefabInstance:
     - target: {fileID: 4831448538762281015, guid: 8655f997f9238d3478893f4e76194521, type: 3}
       propertyPath: m_Name
       value: ammoSymbol3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4831448538762281015, guid: 8655f997f9238d3478893f4e76194521, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8655f997f9238d3478893f4e76194521, type: 3}
@@ -56035,10 +56023,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ammoSymbol2
       objectReference: {fileID: 0}
-    - target: {fileID: 3475225173991432696, guid: 6fcb4f4c33a4e12438a7ad36a76ec7f0, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4713810331939582163, guid: 6fcb4f4c33a4e12438a7ad36a76ec7f0, type: 3}
       propertyPath: m_RootOrder
       value: 13
@@ -56085,7 +56069,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4787627599181964506, guid: 6fcb4f4c33a4e12438a7ad36a76ec7f0, type: 3}
       propertyPath: sceneViewId
-      value: 19
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6fcb4f4c33a4e12438a7ad36a76ec7f0, type: 3}

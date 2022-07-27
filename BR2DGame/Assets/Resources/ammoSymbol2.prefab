@@ -14,11 +14,11 @@ GameObject:
   - component: {fileID: 3909964713191663862}
   m_Layer: 0
   m_Name: ammoSymbol2
-  m_TagString: Untagged
+  m_TagString: AmmoSymbol2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4713810331939582163
 Transform:
   m_ObjectHideFlags: 0
