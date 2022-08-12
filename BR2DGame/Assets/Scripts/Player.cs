@@ -94,7 +94,7 @@ public class Player : MonoBehaviour
             Debug.Log(weaponSymbol.name);
             equipWeapon(weaponSymbol.name);
             this.GetComponent<PhotonView>().RPC("equipWeapon", RpcTarget.OthersBuffered, weaponSymbol.name);
-            this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.AllBuffered);
+            this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.All);
 
         }
 
