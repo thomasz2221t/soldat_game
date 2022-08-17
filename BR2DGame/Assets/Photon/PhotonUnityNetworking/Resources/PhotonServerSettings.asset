@@ -51,6 +51,8 @@ MonoBehaviour:
   - destroyAnimation
   - animationDestructionWithPhoton
   - destroyAmmoSymbol
+  - ShootAk
+  - ShootPistol
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -1508,7 +1508,6 @@ GameObject:
   - component: {fileID: 2940091621222026017}
   - component: {fileID: 6503425617983613220}
   - component: {fileID: -7413085783899347888}
-  - component: {fileID: 3005348398332904092}
   - component: {fileID: 952983562}
   - component: {fileID: 221668379045370973}
   m_Layer: 0
@@ -1623,6 +1622,9 @@ MonoBehaviour:
   firePointPosition: {x: 0, y: 0}
   firePointHeadDistance: 0
   mouseHeadDistance: 0
+  firePointPos: {fileID: 2571835467008889865}
+  bulletPrefab: {fileID: 7852711942540484104, guid: f3497a9acd763ae40849c51c35e2123c, type: 3}
+  magazineSize: 30
 --- !u!114 &6503425617983613220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1684,23 +1686,6 @@ MonoBehaviour:
     InterpolateOption: 0
     InterpolateMoveTowardsSpeed: 1
     InterpolateLerpSpeed: 0
---- !u!114 &3005348398332904092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2939666525252459142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08df140af4921dd44bdf17184a3fb5bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  firePoint: {fileID: 2571835467008889865}
-  bulletPrefab: {fileID: 7852711942540484104, guid: f3497a9acd763ae40849c51c35e2123c, type: 3}
-  magazineSize: 30
-  ak: {fileID: 7280105100535830341}
-  pistol: {fileID: 2661719255895218339}
 --- !u!50 &952983562
 Rigidbody2D:
   serializedVersion: 4

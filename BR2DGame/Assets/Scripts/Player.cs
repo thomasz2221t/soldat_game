@@ -40,15 +40,24 @@ public class Player : MonoBehaviour
 
     private GameObject sceneCamera;
 
-    public Vector2 inputPosition;
-    public Vector2 mousePosition;
-    public Vector2 headPosition;
-    public Vector2 firePointPosition;
-    public float firePointHeadDistance;
-    public float mouseHeadDistance;
+    private Vector2 inputPosition;
+    private Vector2 mousePosition;
+    private Vector2 headPosition;
+    private Vector2 firePointPosition;
+    private float firePointHeadDistance;
+    private float mouseHeadDistance;
 
     private bool isHoldingAk = true;
     private bool pickUpAllowed = false;
+
+    //////////////////////////////// Shooting ////////////////////////////////
+    
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] static private float shotCooldown = 0.1f;
+    [SerializeField] private int magazineSize = 30;
+
+    float timeStamp = 0;
+    float timeStamp2 = 0;
 
 
     // Start is called before the first frame update
@@ -95,7 +104,6 @@ public class Player : MonoBehaviour
             equipWeapon(weaponSymbol.name);
             this.GetComponent<PhotonView>().RPC("equipWeapon", RpcTarget.OthersBuffered, weaponSymbol.name);
             this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.All);
-
         }
 
         //Getting positions for the player rotation
@@ -116,6 +124,26 @@ public class Player : MonoBehaviour
         ammoCountText1.text = ammoCount1.ToString();
         ammoCountText2.text = ammoCount2.ToString();
         ammoCountText3.text = ammoCount3.ToString();
+
+        // Shooting
+        if (ak.activeInHierarchy && Input.GetButton("Fire1") && view.IsMine) {
+            if ((timeStamp <= Time.time) && (magazineSize > 0)) {
+                ShootAk();
+                timeStamp = Time.time + shotCooldown;
+                magazineSize--;
+            }
+
+            //[DELETE] AutoReload cooldown not working anyway
+            if (magazineSize <= 0) {
+                if (timeStamp2 <= Time.time) {
+                    magazineSize = 30;
+                    timeStamp2 = Time.time + 3f;
+                }
+            }
+        }
+        else if (pistol.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine) {
+            ShootPistol();
+        }
     }
 
     // Update is called once per frame
@@ -236,6 +264,18 @@ public class Player : MonoBehaviour
             else
                 PhotonNetwork.Instantiate(pistolSymbolPrefab.name, this.transform.position, this.transform.rotation);
         }
+    }
+
+    //function realizing releasing the bullet from barell
+    //[RPC] - obsolete
+    [PunRPC]
+    void ShootAk() {
+        PhotonNetwork.Instantiate(bulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
+    }
+
+    [PunRPC]
+    void ShootPistol() {
+        PhotonNetwork.Instantiate(bulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
     }
 
     [PunRPC]
