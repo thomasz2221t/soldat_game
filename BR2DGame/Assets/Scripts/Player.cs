@@ -28,9 +28,9 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject pistolSymbolPrefab;
     [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
     [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
-    private uint ammoCount1 = 0;
-    private uint ammoCount2 = 0;
-    private uint ammoCount3 = 0;
+    private uint ammoCountNormal = 30;
+    private uint ammoCountBouncy = 0;
+    private uint ammoCountExplo = 0;
     private GameObject weaponSymbol;
     private GameObject ammoSymbol;
     private GameObject firePoint;
@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
 
     private bool isHoldingAk = true;
     private bool pickUpAllowed = false;
+    private bool canShoot = true;
 
     //////////////////////////////// Shooting ////////////////////////////////
     
@@ -121,9 +122,9 @@ public class Player : MonoBehaviour
             mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
         }
 
-        ammoCountText1.text = ammoCount1.ToString();
-        ammoCountText2.text = ammoCount2.ToString();
-        ammoCountText3.text = ammoCount3.ToString();
+        ammoCountText1.text = ammoCountNormal.ToString();
+        ammoCountText2.text = ammoCountBouncy.ToString();
+        ammoCountText3.text = ammoCountExplo.ToString();
 
         // Shooting
         if (ak.activeInHierarchy && Input.GetButton("Fire1") && view.IsMine) {
@@ -217,14 +218,14 @@ public class Player : MonoBehaviour
             ammoSymbol = collision.gameObject;
             Debug.Log(collision.gameObject.name);
             if(collision.gameObject.tag.Equals("AmmoSymbol1")) {
-                ammoCount1 += 30;
-                Debug.Log(ammoCount1);
+                ammoCountNormal += 30;
+                Debug.Log(ammoCountNormal);
             } else if(collision.gameObject.tag.Equals("AmmoSymbol2")) {
-                ammoCount2 += 30;
-                Debug.Log(ammoCount3);
+                ammoCountBouncy += 30;
+                Debug.Log(ammoCountBouncy);
             } else if(collision.gameObject.tag.Equals("AmmoSymbol3")) {
-                ammoCount3 += 30;
-                Debug.Log(ammoCount3);
+                ammoCountExplo += 30;
+                Debug.Log(ammoCountExplo);
             }
             this.GetComponent<PhotonView>().RPC("destroyAmmoSymbol", RpcTarget.AllBuffered);
         }

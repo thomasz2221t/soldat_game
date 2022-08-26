@@ -9,6 +9,7 @@ TagManager:
   - AmmoSymbol2
   - AmmoSymbol3
   - AmmoSymbol1
+  - wall
   layers:
   - Default
   - TransparentFX

@@ -42,6 +42,7 @@ public class Bullet : MonoBehaviourPun
         Box destroyable = collision.GetComponent<Box>();
         Barrel barrel = collision.GetComponent<Barrel>();
         Player playerBody = collision.GetComponent<Player>();
+        Wall wall = collision.GetComponent<Wall>();
 
         if (destroyable != null)
         {
@@ -59,6 +60,12 @@ public class Bullet : MonoBehaviourPun
             playerBody.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, damage);
             hit = true;
         }
+
+        /*if(wall != null) { //WIP
+            Vector3 v = Vector3.Reflect(transform.right, collision.contacts[0].normal);
+            float rot = 90 - Mathf.Atan2(v.z, v.x) * Mathf.Rad2Deg;
+            transform.eulerAngles = new Vector3(0, 0, rot);
+        }*/ //WIP
 
         if (hit)
         {
