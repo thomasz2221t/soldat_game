@@ -28,9 +28,10 @@ public class ExplosionAnimation : MonoBehaviour
         return Quaternion.Euler(0,0,Random.Range(0,360));
     }
 
+    [PunRPC]
     public void destroyAnimation()
     {
-        PhotonNetwork.Destroy(this.gameObject);
+        Destroy(this.gameObject);
     }
 
     private void OnDrawGizmos()
