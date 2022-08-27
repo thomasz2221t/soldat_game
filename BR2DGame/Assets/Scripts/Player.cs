@@ -52,6 +52,7 @@ public class Player : MonoBehaviour
     
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject bouncyBulletPrefab;
+    [SerializeField] private GameObject exploBulletPrefab;
     [SerializeField] static private float shotCooldown = 0.1f;
     [SerializeField] private int magazineSize = 30;
 
@@ -117,22 +118,22 @@ public class Player : MonoBehaviour
         //picking ammo types
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             ammoTypeUsed = bulletType.NORMAL;
-            normalAmmoBackground.color = Color.yellow; //yellowColor;
+            normalAmmoBackground.color = Color.yellow;
             bouncyAmmoBackground.color = Color.white;
             exploAmmoBackground.color = Color.white;
         }
         if (Input.GetKeyDown(KeyCode.Alpha2)) {
             ammoTypeUsed = bulletType.BOUNCY;
             normalAmmoBackground.color = Color.white;
-            bouncyAmmoBackground.color = Color.green; //greenColor;
+            bouncyAmmoBackground.color = Color.green; 
             exploAmmoBackground.color = Color.white;
         }
-        /*if (Input.GetKeyDown(KeyCode.Alpha3)) {
+        if (Input.GetKeyDown(KeyCode.Alpha3)) {
             ammoTypeUsed = bulletType.EXPLO;
             normalAmmoBackground.color = Color.white;
-            bouncyAmmoBackground.color = Color.white; //greenColor;
+            bouncyAmmoBackground.color = Color.white; 
             exploAmmoBackground.color = Color.red;
-        }*/
+        }
         //
 
 
@@ -318,6 +319,8 @@ public class Player : MonoBehaviour
             PhotonNetwork.Instantiate(bulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
         else if(ammoTypeUsed == bulletType.BOUNCY)
             PhotonNetwork.Instantiate(bouncyBulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
+        else if(ammoTypeUsed == bulletType.EXPLO)
+            PhotonNetwork.Instantiate(exploBulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
     }
 
     [PunRPC]
@@ -326,6 +329,8 @@ public class Player : MonoBehaviour
             PhotonNetwork.Instantiate(bulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
         else if (ammoTypeUsed == bulletType.BOUNCY)
             PhotonNetwork.Instantiate(bouncyBulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
+        else if (ammoTypeUsed == bulletType.EXPLO)
+            PhotonNetwork.Instantiate(exploBulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
     }
 
     [PunRPC]
