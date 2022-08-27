@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Bullets collisions and dmg or blowing up- can be particle effect
-public class Bullet : MonoBehaviourPun
+public class BouncyBullet : MonoBehaviour
 {
     [SerializeField] private GameObject shooter;
     [SerializeField] private float destroyTime = 2f;
@@ -16,21 +15,24 @@ public class Bullet : MonoBehaviourPun
 
     private Transform firePoint;
 
+    private Vector3 lastVelocity;
 
-    private void Start()
-    {
+
+    private void Start() {
         pv = GetComponent<PhotonView>();
-        bulletRigidBody = this.GetComponent<Rigidbody2D>(); 
+        bulletRigidBody = this.GetComponent<Rigidbody2D>();
         bulletRigidBody.AddForce(this.transform.up * bulletForce, ForceMode2D.Impulse); //Adding force to the bullet, making it move
     }
 
-    private void Awake()
-    {
+    private void Awake() {
         StartCoroutine("DestroyByTime");
     }
 
-    IEnumerator DestroyByTime()
-    {
+    private void Update() {
+        lastVelocity = bulletRigidBody.velocity;
+    }
+
+    IEnumerator DestroyByTime() {
         yield return new WaitForSeconds(destroyTime);
         this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
     }
@@ -43,41 +45,54 @@ public class Bullet : MonoBehaviourPun
         Player playerBody = collision.GetComponent<Player>();
         Wall wall = collision.GetComponent<Wall>();
 
-        if (destroyable != null)
-        {
+        if (destroyable != null) {
             destroyable.TakeDamage(damage);
             hit = true;
         }
 
-        if(barrel != null) {
+        if (barrel != null) {
             barrel.TakeDamage(damage);
             hit = true;
         }
 
-        if ((playerBody != null)&&(!collision.gameObject.GetPhotonView().IsMine))
-        {
+        if ((playerBody != null) && (!collision.gameObject.GetPhotonView().IsMine)) {
             playerBody.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, damage);
             hit = true;
         }
 
-        if (hit)
-        {
+        /*if (wall != null) {
+            var speed = lastVelocity.magnitude;
+            var direction = Vector3.Reflect(lastVelocity.normalized, collision.GetContacts())
+
+            hit = true;
+        }*/
+
+        if (hit) {
             StopCoroutine("DestroyByTime");
+            StartCoroutine("DestroyByTime");
             this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
         }
+
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
         Wall wall = collision.gameObject.GetComponent<Wall>();
         if (collision.gameObject.tag == "wall") {
-            StopCoroutine("DestroyByTime");
-            this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);
+        //if (wall != null) { 
+            Debug.Log("wall2 wall22 wall222");
+            var speed = lastVelocity.magnitude;
+            var direction = Vector3.Reflect(lastVelocity.normalized, collision.contacts[0].normal);
+            bulletRigidBody.velocity = direction * Mathf.Max(speed, 0f);
+
+            /*StopCoroutine("DestroyByTime");
+            StartCoroutine("DestroyByTime");
+            this.GetComponent<PhotonView>().RPC("destroyBullet", RpcTarget.AllBuffered);*/
         }
     }
 
     [PunRPC]
-    public void destroyBullet()
-    {
+    public void destroyBullet() {
         Destroy(this.gameObject);
     }
 }
