@@ -586,7 +586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.046734557, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1011,7 +1011,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.24056602, g: 1, b: 0.5123534, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1095,7 +1095,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300010, guid: 309ac3eb4cc441349b63128366ca98b6, type: 3}
+  m_Sprite: {fileID: 21300010, guid: 5163ae49a0de665458bba61cd20c99b1, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1616,15 +1616,12 @@ MonoBehaviour:
   pistolSymbolPrefab: {fileID: 150354949496728278, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
   ak: {fileID: 7280105100535830341}
   pistol: {fileID: 2661719255895218339}
-  inputPosition: {x: 0, y: 0}
-  mousePosition: {x: 0, y: 0}
-  headPosition: {x: 0, y: 0}
-  firePointPosition: {x: 0, y: 0}
-  firePointHeadDistance: 0
-  mouseHeadDistance: 0
-  firePointPos: {fileID: 2571835467008889865}
   bulletPrefab: {fileID: 7852711942540484104, guid: f3497a9acd763ae40849c51c35e2123c, type: 3}
+  bouncyBulletPrefab: {fileID: 8020834037226785590, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
   magazineSize: 30
+  normalAmmoBackground: {fileID: 1455838721}
+  bouncyAmmoBackground: {fileID: 1444870949}
+  exploAmmoBackground: {fileID: 1013149041}
 --- !u!114 &6503425617983613220
 MonoBehaviour:
   m_ObjectHideFlags: 0
