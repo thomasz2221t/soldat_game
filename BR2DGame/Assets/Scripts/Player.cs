@@ -26,8 +26,10 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject akSymbolPrefab;
     [SerializeField] private GameObject pistolSymbolPrefab;
+    [SerializeField] private GameObject shotgunSymbolPrefab;
     [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
     [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
+    [SerializeField] private GameObject shotgun; // !!! Don't change, it has to be initialized by SerializeField !!!
     private uint ammoCountNormal = 30;
     private uint ammoCountBouncy = 0;
     private uint ammoCountExplo = 0;
@@ -37,6 +39,7 @@ public class Player : MonoBehaviour
     private GameObject akFirePoint; 
     private GameObject pistolFirePoint;
     private GameObject head;
+    private GameObject shotgunFirePoint;
 
     private GameObject sceneCamera;
 
@@ -47,7 +50,7 @@ public class Player : MonoBehaviour
     private float firePointHeadDistance;
     private float mouseHeadDistance;
 
-    private bool isHoldingAk = true;
+    private int isHoldingAk = 0; //0 - holdingAk, 1 - holdingPistol, 2 - holdingShotgun
     private bool pickUpAllowed = false;
     private bool canShoot = true;
 
@@ -73,9 +76,11 @@ public class Player : MonoBehaviour
             head = GameObject.Find("Head");
             akFirePoint = GameObject.Find("FirePoint"); // akFirePoint
             pistolFirePoint = GameObject.Find("PistolFirePoint");
+            shotgunFirePoint = GameObject.Find("ShotgunFirePoint");
 
-            if (isHoldingAk) {
+            if (isHoldingAk == 0) {
                 pistol.SetActive(false);
+                shotgun.SetActive(false);
                 firePoint = akFirePoint;
             }
 
@@ -144,6 +149,9 @@ public class Player : MonoBehaviour
         }
         else if (pistol.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine) {
             ShootPistol();
+        }
+        else if(shotgun.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine){
+            ShootShotgun();
         }
     }
 
@@ -243,27 +251,43 @@ public class Player : MonoBehaviour
             Debug.Log("Pisztolet znaleziony");
             ak.SetActive(false);
             pistol.SetActive(true);
+            shotgun.SetActive(false);
             firePoint = pistolFirePoint;
             dropCurrentWeapon(isHoldingAk);
-            isHoldingAk = false;
+            isHoldingAk = 1;
 
         }
         else if (weaponName.Contains("ak")) {
             Debug.Log("Akacz znaleziony");
             ak.SetActive(true);
             pistol.SetActive(false);
+            shotgun.SetActive(false);
             firePoint = akFirePoint;
             dropCurrentWeapon(isHoldingAk);
-            isHoldingAk = true;
+            isHoldingAk = 0;
+        }
+        else if (weaponName.Contains("shotgun"))
+        {
+            Debug.Log("Shotgun znaleziony");
+            ak.SetActive(false);
+            pistol.SetActive(false);
+            shotgun.SetActive(true);
+            firePoint = shotgunFirePoint;
+            dropCurrentWeapon(isHoldingAk);
+            isHoldingAk = 2;
+
+
         }
     }
 
-    public void dropCurrentWeapon(bool wasHoldingAK) {
+    public void dropCurrentWeapon(int wasHoldingAK) {
         if (view.IsMine) {
-            if (wasHoldingAK)
+            if (wasHoldingAK == 0)
                 PhotonNetwork.Instantiate(akSymbolPrefab.name, this.transform.position, this.transform.rotation);
-            else
+            else if(wasHoldingAK == 1)
                 PhotonNetwork.Instantiate(pistolSymbolPrefab.name, this.transform.position, this.transform.rotation);
+            else if(wasHoldingAK == 2)
+                PhotonNetwork.Instantiate(shotgunSymbolPrefab.name, this.transform.position, this.transform.rotation);
         }
     }
 
@@ -277,6 +301,11 @@ public class Player : MonoBehaviour
     [PunRPC]
     void ShootPistol() {
         PhotonNetwork.Instantiate(bulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
+    }
+
+    [PunRPC]
+    void ShootShotgun() {
+        PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation); //Instantiation of a new bullet
     }
 
     [PunRPC]

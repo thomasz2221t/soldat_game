@@ -8,6 +8,7 @@ public class Box : MonoBehaviour
     [SerializeField] private float health = 100;
     [SerializeField] private GameObject akPrefab;
     [SerializeField] private GameObject pistolPrefab;
+    [SerializeField] private GameObject shotgunPrefab;
     [SerializeField] private GameObject ammoPrefab1;
     [SerializeField] private GameObject ammoPrefab2;
     [SerializeField] private GameObject ammoPrefab3;
@@ -34,6 +35,9 @@ public class Box : MonoBehaviour
                 break;
             case 2:
                 PhotonNetwork.Instantiate(akPrefab.name, this.transform.position, this.transform.rotation);
+                break;
+            case 3:
+                PhotonNetwork.Instantiate(shotgunPrefab.name, this.transform.position, this.transform.rotation);
                 break;
         }
 
