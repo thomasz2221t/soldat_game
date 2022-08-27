@@ -8,8 +8,8 @@ public class Bullet : MonoBehaviourPun
 {
     [SerializeField] private GameObject shooter;
     [SerializeField] private float destroyTime = 2f;
-    [SerializeField] private int damage = 15;
-    [SerializeField] private float bulletForce = 20f;
+    [SerializeField] private float damage = 15;
+    [SerializeField] private float bulletForce = 50f;
     [SerializeField] PhotonView pv;
 
     private Rigidbody2D bulletRigidBody;
@@ -40,7 +40,9 @@ public class Bullet : MonoBehaviourPun
     {
         bool hit = false;
         Box destroyable = collision.GetComponent<Box>();
+        Barrel barrel = collision.GetComponent<Barrel>();
         Player playerBody = collision.GetComponent<Player>();
+        Wall wall = collision.GetComponent<Wall>();
 
         if (destroyable != null)
         {
@@ -48,11 +50,22 @@ public class Bullet : MonoBehaviourPun
             hit = true;
         }
 
-        if((playerBody != null)&&(!collision.gameObject.GetPhotonView().IsMine))
+        if(barrel != null) {
+            barrel.TakeDamage(damage);
+            hit = true;
+        }
+
+        if ((playerBody != null)&&(!collision.gameObject.GetPhotonView().IsMine))
         {
             playerBody.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, damage);
             hit = true;
         }
+
+        /*if(wall != null) { //WIP
+            Vector3 v = Vector3.Reflect(transform.right, collision.contacts[0].normal);
+            float rot = 90 - Mathf.Atan2(v.z, v.x) * Mathf.Rad2Deg;
+            transform.eulerAngles = new Vector3(0, 0, rot);
+        }*/ //WIP
 
         if (hit)
         {

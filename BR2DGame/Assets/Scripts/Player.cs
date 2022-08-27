@@ -7,10 +7,19 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private int health = 1000;
+    [SerializeField] private float health = 1000;
+    private float maxHealth;
+    [SerializeField] Image healthbarImage;
+    [SerializeField] GameObject ui;
+    //private int currentHealth;
+    //public HealthBar healthBar;
+
     [SerializeField] private float speed = 50;
     [SerializeField] PhotonView view;
     [SerializeField] TMP_Text playerName;
+    [SerializeField] TMP_Text ammoCountText1;
+    [SerializeField] TMP_Text ammoCountText2;
+    [SerializeField] TMP_Text ammoCountText3;
 
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
@@ -19,7 +28,11 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject pistolSymbolPrefab;
     [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
     [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
+    private uint ammoCountNormal = 30;
+    private uint ammoCountBouncy = 0;
+    private uint ammoCountExplo = 0;
     private GameObject weaponSymbol;
+    private GameObject ammoSymbol;
     private GameObject firePoint;
     private GameObject akFirePoint; 
     private GameObject pistolFirePoint;
@@ -27,15 +40,25 @@ public class Player : MonoBehaviour
 
     private GameObject sceneCamera;
 
-    public Vector2 inputPosition;
-    public Vector2 mousePosition;
-    public Vector2 headPosition;
-    public Vector2 firePointPosition;
-    public float firePointHeadDistance;
-    public float mouseHeadDistance;
+    private Vector2 inputPosition;
+    private Vector2 mousePosition;
+    private Vector2 headPosition;
+    private Vector2 firePointPosition;
+    private float firePointHeadDistance;
+    private float mouseHeadDistance;
 
     private bool isHoldingAk = true;
     private bool pickUpAllowed = false;
+    private bool canShoot = true;
+
+    //////////////////////////////// Shooting ////////////////////////////////
+    
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] static private float shotCooldown = 0.1f;
+    [SerializeField] private int magazineSize = 30;
+
+    float timeStamp = 0;
+    float timeStamp2 = 0;
 
 
     // Start is called before the first frame update
@@ -44,6 +67,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         view = GetComponent<PhotonView>();
+        maxHealth = health;
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
             head = GameObject.Find("Head");
@@ -57,6 +81,8 @@ public class Player : MonoBehaviour
 
             sceneCamera.SetActive(false);
             playerCamera.SetActive(true);
+        } else {
+            Destroy(ui);
         }
         Debug.Log(view.Owner.NickName);
         playerName.text = view.Owner.NickName;
@@ -78,8 +104,7 @@ public class Player : MonoBehaviour
             Debug.Log(weaponSymbol.name);
             equipWeapon(weaponSymbol.name);
             this.GetComponent<PhotonView>().RPC("equipWeapon", RpcTarget.OthersBuffered, weaponSymbol.name);
-            this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.AllBuffered);
-
+            this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.All);
         }
 
         //Getting positions for the player rotation
@@ -95,6 +120,30 @@ public class Player : MonoBehaviour
         {
             firePointHeadDistance = Vector2.Distance(headPosition, firePointPosition);
             mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
+        }
+
+        ammoCountText1.text = ammoCountNormal.ToString();
+        ammoCountText2.text = ammoCountBouncy.ToString();
+        ammoCountText3.text = ammoCountExplo.ToString();
+
+        // Shooting
+        if (ak.activeInHierarchy && Input.GetButton("Fire1") && view.IsMine) {
+            if ((timeStamp <= Time.time) && (magazineSize > 0)) {
+                ShootAk();
+                timeStamp = Time.time + shotCooldown;
+                magazineSize--;
+            }
+
+            //[DELETE] AutoReload cooldown not working anyway
+            if (magazineSize <= 0) {
+                if (timeStamp2 <= Time.time) {
+                    magazineSize = 30;
+                    timeStamp2 = Time.time + 3f;
+                }
+            }
+        }
+        else if (pistol.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine) {
+            ShootPistol();
         }
     }
 
@@ -147,10 +196,13 @@ public class Player : MonoBehaviour
     }
 
     [PunRPC]
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
-        health -= damage;
-
+        if (view.IsMine) {
+            health -= damage;
+            healthbarImage.fillAmount = health / maxHealth;
+            Debug.Log("Health: " + health + " maxHealth: " + maxHealth + " divided: " + health / maxHealth);
+        }
         if (health <= 0) {
             if(view.IsMine)
                 PhotonNetwork.LoadLevel("Dead");
@@ -162,6 +214,20 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag.Equals("WeaponSymbol")) {
             pickUpAllowed = true;
             weaponSymbol = collision.gameObject;
+        } else if (collision.gameObject.tag.Equals("AmmoSymbol1") || collision.gameObject.tag.Equals("AmmoSymbol2") || collision.gameObject.tag.Equals("AmmoSymbol3")) {
+            ammoSymbol = collision.gameObject;
+            Debug.Log(collision.gameObject.name);
+            if(collision.gameObject.tag.Equals("AmmoSymbol1")) {
+                ammoCountNormal += 30;
+                Debug.Log(ammoCountNormal);
+            } else if(collision.gameObject.tag.Equals("AmmoSymbol2")) {
+                ammoCountBouncy += 30;
+                Debug.Log(ammoCountBouncy);
+            } else if(collision.gameObject.tag.Equals("AmmoSymbol3")) {
+                ammoCountExplo += 30;
+                Debug.Log(ammoCountExplo);
+            }
+            this.GetComponent<PhotonView>().RPC("destroyAmmoSymbol", RpcTarget.AllBuffered);
         }
     }
 
@@ -201,8 +267,26 @@ public class Player : MonoBehaviour
         }
     }
 
+    //function realizing releasing the bullet from barell
+    //[RPC] - obsolete
+    [PunRPC]
+    void ShootAk() {
+        PhotonNetwork.Instantiate(bulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
+    }
+
+    [PunRPC]
+    void ShootPistol() {
+        PhotonNetwork.Instantiate(bulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
+    }
+
     [PunRPC]
     public void destroyWeaponSymbol() {
         Destroy(weaponSymbol);
     }
+
+    [PunRPC]
+    public void destroyAmmoSymbol() {
+        Destroy(ammoSymbol);
+    }
+
 }
