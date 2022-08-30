@@ -56216,10 +56216,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5728578687056636800, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
-      propertyPath: sceneViewId
-      value: 22
-      objectReference: {fileID: 0}
     - target: {fileID: 5728578687056636806, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
       propertyPath: m_Name
       value: ExploBullet
