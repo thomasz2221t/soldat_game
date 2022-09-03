@@ -57,10 +57,14 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject bouncyBulletPrefab;
     [SerializeField] private GameObject exploBulletPrefab;
     [SerializeField] static private float shotCooldown = 0.1f;
-    [SerializeField] private int magazineSize = 30;
-
     float timeStamp = 0;
-    float timeStamp2 = 0;
+    [SerializeField] private int akMagazineSize = 30;
+    [SerializeField] private int pistolMagazineSize = 12;
+    [SerializeField] private int shotgunMagazineSize = 2;
+    [SerializeField] private float reloadAkTime = 8f;
+    [SerializeField] private float reloadPistolTime = 4f;
+    [SerializeField] private float reloadShotgunTime = 6f;
+    private int bulletsInWeaponMagazine;
 
     /// UI ///
     [SerializeField] private Image normalAmmoBackground;
@@ -156,6 +160,22 @@ public class Player : MonoBehaviour
             this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.All);
         }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if(ak.activeSelf)
+            {
+                StartCoroutine("reloadAk");
+            }
+            else if (pistol.activeSelf)
+            {
+                StartCoroutine("reloadPistol");
+            }
+            else if (shotgun.activeSelf)
+            {
+                StartCoroutine("reloadShotgun");
+            }
+        }
+
         //Getting positions for the player rotation
         if (head != null) {
             headPosition.x = head.transform.position.x;
@@ -175,28 +195,94 @@ public class Player : MonoBehaviour
         ammoCountText2.text = ammoCountBouncy.ToString();
         ammoCountText3.text = ammoCountExplo.ToString();
 
+        int availableBullets = 0;
+        if (ammoTypeUsed == Player.bulletType.NORMAL)
+        {
+            availableBullets = (int)ammoCountNormal;
+        }
+        else if (ammoTypeUsed == Player.bulletType.BOUNCY)
+        {
+            availableBullets = (int)ammoCountBouncy;
+        }
+        else if (ammoTypeUsed == Player.bulletType.EXPLO)
+        {
+          availableBullets = (int)ammoCountExplo;
+        }
+
         // Shooting
         if (ak.activeInHierarchy && Input.GetButton("Fire1") && view.IsMine) {
-            if ((timeStamp <= Time.time) && (magazineSize > 0)) {
+            if ((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0))
+            {
                 ShootAk();
                 timeStamp = Time.time + shotCooldown;
-                magazineSize--;
+                bulletsInWeaponMagazine--;
             }
 
-            //[DELETE] AutoReload cooldown not working anyway
-            if (magazineSize <= 0) {
-                if (timeStamp2 <= Time.time) {
-                    magazineSize = 30;
-                    timeStamp2 = Time.time + 3f;
-                }
+            else if(availableBullets > 0)
+            {
+                StartCoroutine("reloadAk");
             }
+
         }
         else if (pistol.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine) {
-            ShootPistol();
+            if(bulletsInWeaponMagazine > 0) { 
+                ShootPistol();
+                bulletsInWeaponMagazine--;
+            }
+            else if(availableBullets > 0)
+            {
+                StartCoroutine("reloadPistol");
+            }
         }
         else if(shotgun.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine){
-            ShootShotgun();
+            if(bulletsInWeaponMagazine > 0) {
+                ShootShotgun();
+                bulletsInWeaponMagazine--;
+            }
+            else if(availableBullets > 0)
+            {
+                StartCoroutine("reloadShotgun");
+            }
         }
+    }
+
+    IEnumerator reloadAk()
+    {
+        yield return new WaitForSeconds(reloadAkTime);
+        bulletsInWeaponMagazine = subtractLoadedAmmoByType(akMagazineSize);
+    }
+
+    IEnumerator reloadPistol()
+    {
+        yield return new WaitForSeconds(reloadPistolTime);
+        bulletsInWeaponMagazine = subtractLoadedAmmoByType(pistolMagazineSize);
+    }
+
+    IEnumerator reloadShotgun()
+    {
+        yield return new WaitForSeconds(reloadShotgunTime);
+        bulletsInWeaponMagazine = subtractLoadedAmmoByType(shotgunMagazineSize);
+    }
+
+    private int subtractLoadedAmmoByType(int numberQuantity)
+    {
+        int loadedBullets = 0;
+        if(ammoTypeUsed == Player.bulletType.NORMAL)
+        {
+            loadedBullets -= (ammoCountNormal >= numberQuantity) ? numberQuantity : (int)ammoCountNormal;
+            ammoTypeUsed -= loadedBullets;
+        }
+        else if(ammoTypeUsed == Player.bulletType.BOUNCY)
+        {
+            loadedBullets -= (ammoCountBouncy >= numberQuantity) ? numberQuantity : (int)ammoCountBouncy;
+            ammoTypeUsed -= loadedBullets;
+        }
+        else if(ammoTypeUsed == Player.bulletType.EXPLO)
+        {
+            loadedBullets -= (ammoCountExplo >= numberQuantity) ? numberQuantity : (int)ammoCountExplo;
+            ammoTypeUsed -= loadedBullets;
+        }
+        return loadedBullets;
     }
 
     // Update is called once per frame
@@ -266,6 +352,15 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag.Equals("WeaponSymbol")) {
             pickUpAllowed = true;
             weaponSymbol = collision.gameObject;
+            if (weaponSymbol.name.Contains("pistol")){
+                bulletsInWeaponMagazine = collision.gameObject.GetComponent<PistoSymbolScript>().pistolAmmoInMagazine;
+            }
+            else if (weaponSymbol.name.Contains("ak")){
+                bulletsInWeaponMagazine = collision.gameObject.GetComponent<AkSymbolScript>().akAmmoInMagazine;
+            }
+            else if (weaponSymbol.name.Contains("shotgun")){
+                bulletsInWeaponMagazine = collision.gameObject.GetComponent<ShotgunSymboScript>().shotgunAmmoInMagazine;
+            }
         } else if (collision.gameObject.tag.Equals("AmmoSymbol1") || collision.gameObject.tag.Equals("AmmoSymbol2") || collision.gameObject.tag.Equals("AmmoSymbol3")) {
             ammoSymbol = collision.gameObject;
             Debug.Log(collision.gameObject.name);
