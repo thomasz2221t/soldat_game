@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8862685645483659190}
   - component: {fileID: 8862685645483659191}
   - component: {fileID: 8433155829406629355}
-  - component: {fileID: 1309840632}
   m_Layer: 0
   m_Name: akSymbol
   m_TagString: WeaponSymbol
@@ -125,16 +124,3 @@ CapsuleCollider2D:
   m_Offset: {x: 0.0004923356, y: 0.009653212}
   m_Size: {x: 1.0569329, y: 1.0385157}
   m_Direction: 1
---- !u!114 &1309840632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8862685645483659192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ec6acede3370784e96f3b9c5e0e15c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  akAmmoInMagazine: 30

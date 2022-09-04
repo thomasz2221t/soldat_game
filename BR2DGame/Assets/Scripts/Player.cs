@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     [SerializeField] TMP_Text ammoCountText1;
     [SerializeField] TMP_Text ammoCountText2;
     [SerializeField] TMP_Text ammoCountText3;
+    [SerializeField] TMP_Text weaponMagazine;
 
     [SerializeField] private Rigidbody2D playerRigidbody;
     [SerializeField] private GameObject playerCamera;
@@ -56,16 +57,17 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject bouncyBulletPrefab;
     [SerializeField] private GameObject exploBulletPrefab;
-    [SerializeField] static private float shotCooldown = 0.5f;
+    [SerializeField] static private float shotCooldown = 0.1f;
     float timeStamp = 0;
     [SerializeField] private int akMagazineSize = 30;
     [SerializeField] private int pistolMagazineSize = 12;
     [SerializeField] private int shotgunMagazineSize = 2;
-    [SerializeField] private float reloadAkTime = 16f;
-    [SerializeField] private float reloadPistolTime = 8f;
-    [SerializeField] private float reloadShotgunTime = 12f;
+    [SerializeField] private float reloadAkTime = 1.3f;
+    [SerializeField] private float reloadPistolTime = 0.2f;
+    [SerializeField] private float reloadShotgunTime = 0.3f;
     private int bulletsInWeaponMagazine;
     private bool inReload = false;
+    private uint shotClicksCounter = 0;
 
     /// UI ///
     [SerializeField] private Image normalAmmoBackground;
@@ -125,6 +127,7 @@ public class Player : MonoBehaviour
         ammoCountText1.text = ammoCountNormal.ToString();
         ammoCountText2.text = ammoCountBouncy.ToString();
         ammoCountText3.text = ammoCountExplo.ToString();
+        weaponMagazine.text = bulletsInWeaponMagazine.ToString()+ "/" + ((ak.activeSelf) ? akMagazineSize.ToString() : (pistol.activeSelf ? pistolMagazineSize.ToString() : shotgunMagazineSize.ToString()));
 
         //picking ammo types
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
@@ -166,18 +169,24 @@ public class Player : MonoBehaviour
         {
             if(ak.activeSelf)
             {
-                inReload = true;
-                StartCoroutine("reloadAk");
+                if(inReload == false) {
+                    inReload = true;
+                    StartCoroutine("reloadAk");
+                }
             }
             else if (pistol.activeSelf)
             {
-                inReload = true;
-                StartCoroutine("reloadPistol");
+                if(inReload == false) {
+                    inReload = true;
+                    StartCoroutine("reloadPistol");
+                }
             }
             else if (shotgun.activeSelf)
             {
-                inReload = true;
-                StartCoroutine("reloadShotgun");
+                if(inReload == false) {
+                    inReload = true;
+                    StartCoroutine("reloadShotgun");
+                }
             }
         }
 
@@ -214,27 +223,29 @@ public class Player : MonoBehaviour
             availableBullets = (int)ammoCountExplo;
         }
 
-        if(bulletsInWeaponMagazine == 0)
-        {
-            inReload = true;
-        }
-
         // Shooting
         if (ak.activeInHierarchy && Input.GetButton("Fire1") && view.IsMine) {
+            //shotClicksCounter++;
             if ((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0))
+            //if ((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0) && (shotClicksCounter < bulletsInWeaponMagazine))
             {
-                if (!inReload) {
+                if (inReload != true) {
                     ShootAk();
                     Debug.Log(bulletsInWeaponMagazine);
                     timeStamp = Time.time + shotCooldown;
                 }
                 //bulletsInWeaponMagazine--;
             }
-            else if((availableBullets > 0) && (bulletsInWeaponMagazine == 0))
+            else if((availableBullets > 0) && (bulletsInWeaponMagazine == 0) && inReload==false)
             {
+                Debug.Log("Reloading");
                 inReload = true;
                 StartCoroutine("reloadAk");
             }
+            /*else if (shotClicksCounter >= bulletsInWeaponMagazine)
+            {
+                shotClicksCounter = 0;
+            }*/
             else
             {
                 Debug.Log("Pociski niet");
@@ -242,38 +253,50 @@ public class Player : MonoBehaviour
 
         }
         else if (pistol.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine) {
-            if((timeStamp <= Time.time) && bulletsInWeaponMagazine > 0) {
-                if (!inReload) {
+            if ((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0)) {
+            //if ((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0) && (shotClicksCounter < bulletsInWeaponMagazine)) {
+                if (inReload != true) {
                     ShootPistol();
                     Debug.Log(bulletsInWeaponMagazine);
                     timeStamp = Time.time + shotCooldown;
                 }
                 //bulletsInWeaponMagazine--;
             }
-            else if(availableBullets > 0 && (bulletsInWeaponMagazine == 0))
+            else if(availableBullets > 0 && (bulletsInWeaponMagazine == 0) && inReload == false)
             {
+                Debug.Log("Reloading");
                 inReload = true;
                 StartCoroutine("reloadPistol");
             }
+            /*else if (shotClicksCounter >= bulletsInWeaponMagazine)
+            {
+                shotClicksCounter = 0;
+            }*/
             else
             {
                 Debug.Log("Pociski niet");
             }
         }
         else if(shotgun.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine){
-            if((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0)) {
-                if (!inReload) { 
+            if ((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0) && (shotClicksCounter < bulletsInWeaponMagazine)) {
+            //if((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0) && (shotClicksCounter < bulletsInWeaponMagazine)) {
+                if (inReload != true) { 
                     ShootShotgun();
                     Debug.Log(bulletsInWeaponMagazine);
                     timeStamp = Time.time + shotCooldown;
                 }
                 //bulletsInWeaponMagazine--;
             }
-            else if(availableBullets > 0 && (bulletsInWeaponMagazine == 0))
+            else if(availableBullets > 0 && (bulletsInWeaponMagazine == 0) && inReload == false)
             {
+                Debug.Log("Reloading");
                 inReload = true;
                 StartCoroutine("reloadShotgun");
             }
+            /*else if (shotClicksCounter >= bulletsInWeaponMagazine)
+            {
+                shotClicksCounter = 0;
+            }*/
             else
             {
                 Debug.Log("Pociski niet");
@@ -294,17 +317,21 @@ public class Player : MonoBehaviour
 
     IEnumerator reloadPistol()
     {
+        Debug.Log("Startuje korutyne pistol");
         yield return new WaitForSeconds(reloadPistolTime);
         bulletsInWeaponMagazine = 12;
         //bulletsInWeaponMagazine = subtractLoadedAmmoByType(pistolMagazineSize);
+        Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
         inReload = false;
     }
 
     IEnumerator reloadShotgun()
     {
+        Debug.Log("Startuje korutyne shotgun");
         yield return new WaitForSeconds(reloadShotgunTime);
         bulletsInWeaponMagazine = 2;
         //bulletsInWeaponMagazine = subtractLoadedAmmoByType(shotgunMagazineSize);
+        Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
         inReload = false;
     }
 
@@ -437,6 +464,10 @@ public class Player : MonoBehaviour
             shotgun.SetActive(false);
             firePoint = pistolFirePoint;
             bulletsInWeaponMagazine = pistolMagazineSize;
+            StopCoroutine("reloadAk");
+            StopCoroutine("reloadShotgun");
+            Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
+            inReload = false;
             dropCurrentWeapon(isHoldingAk);
             isHoldingAk = 1;
 
@@ -448,6 +479,10 @@ public class Player : MonoBehaviour
             shotgun.SetActive(false);
             firePoint = akFirePoint;
             bulletsInWeaponMagazine = akMagazineSize;
+            StopCoroutine("reloadPistol");
+            StopCoroutine("reloadShotgun");
+            Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
+            inReload = false;
             dropCurrentWeapon(isHoldingAk);
             isHoldingAk = 0;
         }
@@ -459,6 +494,10 @@ public class Player : MonoBehaviour
             shotgun.SetActive(true);
             firePoint = shotgunFirePoint;
             bulletsInWeaponMagazine = shotgunMagazineSize;
+            StopCoroutine("reloadPistol");
+            StopCoroutine("reloadAk");
+            Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
+            inReload = false;
             dropCurrentWeapon(isHoldingAk);
             isHoldingAk = 2;
 

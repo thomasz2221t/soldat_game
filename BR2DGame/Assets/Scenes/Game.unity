@@ -54591,10 +54591,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player1
       objectReference: {fileID: 0}
-    - target: {fileID: 2939666525252459142, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6503425617983613220, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: sceneViewId
       value: 5
@@ -55005,7 +55001,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: shotgunSymbol
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6216170777480082509, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8602259489720662990, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
+      propertyPath: sceneViewId
+      value: 23
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1052017620, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
 --- !u!1 &1151598378
 GameObject:
@@ -56076,6 +56081,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pistolSymbol
       objectReference: {fileID: 0}
+    - target: {fileID: 2536423831873791317, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
+      propertyPath: sceneViewId
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5300939684612448205, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -56120,7 +56129,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5014862069071888709, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
 --- !u!1 &5014862069071888708 stripped
 GameObject:
