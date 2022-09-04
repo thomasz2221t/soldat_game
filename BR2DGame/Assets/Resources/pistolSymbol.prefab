@@ -12,13 +12,14 @@ GameObject:
   - component: {fileID: 1073498808025588138}
   - component: {fileID: 2536423831873791317}
   - component: {fileID: 510498217676672657}
+  - component: {fileID: 5014862069071888709}
   m_Layer: 0
   m_Name: pistolSymbol
   m_TagString: WeaponSymbol
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5300939684612448205
 Transform:
   m_ObjectHideFlags: 0
@@ -105,7 +106,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents: []
-  sceneViewId: 0
+  sceneViewId: 4
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!58 &510498217676672657
@@ -124,3 +125,16 @@ CircleCollider2D:
   m_Offset: {x: 0.00023686886, y: 0}
   serializedVersion: 2
   m_Radius: 0.52873564
+--- !u!114 &5014862069071888709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150354949496728278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f5c8b9d450c51c459bbb01c3a8c44ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pistolAmmoInMagazine: 12

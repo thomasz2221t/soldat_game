@@ -1621,7 +1621,13 @@ MonoBehaviour:
   bulletPrefab: {fileID: 7852711942540484104, guid: f3497a9acd763ae40849c51c35e2123c, type: 3}
   bouncyBulletPrefab: {fileID: 8020834037226785590, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
   exploBulletPrefab: {fileID: 5728578687056636806, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
-  magazineSize: 30
+  akMagazineSize: 30
+  pistolMagazineSize: 12
+  shotgunMagazineSize: 2
+  reloadAkTime: 8
+  reloadPistolTime: 4
+  reloadShotgunTime: 6
+  bulletsInWeaponMagazine: 0
   normalAmmoBackground: {fileID: 1455838721}
   bouncyAmmoBackground: {fileID: 1444870949}
   exploAmmoBackground: {fileID: 1013149041}

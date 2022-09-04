@@ -55005,14 +55005,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: shotgunSymbol
       objectReference: {fileID: 0}
-    - target: {fileID: 6216170777480082509, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8602259489720662990, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
-      propertyPath: sceneViewId
-      value: 23
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
 --- !u!1 &1151598378
@@ -56084,14 +56076,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: pistolSymbol
       objectReference: {fileID: 0}
-    - target: {fileID: 150354949496728278, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2536423831873791317, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
-      propertyPath: sceneViewId
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 5300939684612448205, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -56216,6 +56200,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5728578687056636800, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
+      propertyPath: sceneViewId
+      value: 22
+      objectReference: {fileID: 0}
     - target: {fileID: 5728578687056636806, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
       propertyPath: m_Name
       value: ExploBullet
@@ -56515,10 +56503,6 @@ PrefabInstance:
     - target: {fileID: 8862685645483659192, guid: 53ecaa8c44838f94795c56c34a50f1be, type: 3}
       propertyPath: m_Name
       value: akSymbol
-      objectReference: {fileID: 0}
-    - target: {fileID: 8862685645483659192, guid: 53ecaa8c44838f94795c56c34a50f1be, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53ecaa8c44838f94795c56c34a50f1be, type: 3}

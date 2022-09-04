@@ -56,15 +56,16 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject bouncyBulletPrefab;
     [SerializeField] private GameObject exploBulletPrefab;
-    [SerializeField] static private float shotCooldown = 0.1f;
+    [SerializeField] static private float shotCooldown = 0.5f;
     float timeStamp = 0;
     [SerializeField] private int akMagazineSize = 30;
     [SerializeField] private int pistolMagazineSize = 12;
     [SerializeField] private int shotgunMagazineSize = 2;
-    [SerializeField] private float reloadAkTime = 8f;
-    [SerializeField] private float reloadPistolTime = 4f;
-    [SerializeField] private float reloadShotgunTime = 6f;
+    [SerializeField] private float reloadAkTime = 16f;
+    [SerializeField] private float reloadPistolTime = 8f;
+    [SerializeField] private float reloadShotgunTime = 12f;
     private int bulletsInWeaponMagazine;
+    private bool inReload = false;
 
     /// UI ///
     [SerializeField] private Image normalAmmoBackground;
@@ -102,6 +103,7 @@ public class Player : MonoBehaviour
                 pistol.SetActive(false);
                 shotgun.SetActive(false);
                 firePoint = akFirePoint;
+                bulletsInWeaponMagazine = akMagazineSize;
             }
 
             sceneCamera.SetActive(false);
@@ -164,14 +166,17 @@ public class Player : MonoBehaviour
         {
             if(ak.activeSelf)
             {
+                inReload = true;
                 StartCoroutine("reloadAk");
             }
             else if (pistol.activeSelf)
             {
+                inReload = true;
                 StartCoroutine("reloadPistol");
             }
             else if (shotgun.activeSelf)
             {
+                inReload = true;
                 StartCoroutine("reloadShotgun");
             }
         }
@@ -206,62 +211,101 @@ public class Player : MonoBehaviour
         }
         else if (ammoTypeUsed == Player.bulletType.EXPLO)
         {
-          availableBullets = (int)ammoCountExplo;
+            availableBullets = (int)ammoCountExplo;
+        }
+
+        if(bulletsInWeaponMagazine == 0)
+        {
+            inReload = true;
         }
 
         // Shooting
         if (ak.activeInHierarchy && Input.GetButton("Fire1") && view.IsMine) {
             if ((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0))
             {
-                ShootAk();
-                timeStamp = Time.time + shotCooldown;
-                bulletsInWeaponMagazine--;
+                if (!inReload) {
+                    ShootAk();
+                    Debug.Log(bulletsInWeaponMagazine);
+                    timeStamp = Time.time + shotCooldown;
+                }
+                //bulletsInWeaponMagazine--;
             }
-
-            else if(availableBullets > 0)
+            else if((availableBullets > 0) && (bulletsInWeaponMagazine == 0))
             {
+                inReload = true;
                 StartCoroutine("reloadAk");
+            }
+            else
+            {
+                Debug.Log("Pociski niet");
             }
 
         }
         else if (pistol.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine) {
-            if(bulletsInWeaponMagazine > 0) { 
-                ShootPistol();
-                bulletsInWeaponMagazine--;
+            if((timeStamp <= Time.time) && bulletsInWeaponMagazine > 0) {
+                if (!inReload) {
+                    ShootPistol();
+                    Debug.Log(bulletsInWeaponMagazine);
+                    timeStamp = Time.time + shotCooldown;
+                }
+                //bulletsInWeaponMagazine--;
             }
-            else if(availableBullets > 0)
+            else if(availableBullets > 0 && (bulletsInWeaponMagazine == 0))
             {
+                inReload = true;
                 StartCoroutine("reloadPistol");
+            }
+            else
+            {
+                Debug.Log("Pociski niet");
             }
         }
         else if(shotgun.activeInHierarchy && Input.GetButtonDown("Fire1") && view.IsMine){
-            if(bulletsInWeaponMagazine > 0) {
-                ShootShotgun();
-                bulletsInWeaponMagazine--;
+            if((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0)) {
+                if (!inReload) { 
+                    ShootShotgun();
+                    Debug.Log(bulletsInWeaponMagazine);
+                    timeStamp = Time.time + shotCooldown;
+                }
+                //bulletsInWeaponMagazine--;
             }
-            else if(availableBullets > 0)
+            else if(availableBullets > 0 && (bulletsInWeaponMagazine == 0))
             {
+                inReload = true;
                 StartCoroutine("reloadShotgun");
+            }
+            else
+            {
+                Debug.Log("Pociski niet");
             }
         }
     }
 
     IEnumerator reloadAk()
     {
+        Debug.Log("Startuje korutyne");
         yield return new WaitForSeconds(reloadAkTime);
-        bulletsInWeaponMagazine = subtractLoadedAmmoByType(akMagazineSize);
+        Debug.Log("Uzupelniam pociski");
+        bulletsInWeaponMagazine = 30;
+        //bulletsInWeaponMagazine = subtractLoadedAmmoByType(akMagazineSize);
+        Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
+        inReload = false;
     }
 
     IEnumerator reloadPistol()
     {
         yield return new WaitForSeconds(reloadPistolTime);
-        bulletsInWeaponMagazine = subtractLoadedAmmoByType(pistolMagazineSize);
+        bulletsInWeaponMagazine = 12;
+        //bulletsInWeaponMagazine = subtractLoadedAmmoByType(pistolMagazineSize);
+        inReload = false;
     }
 
     IEnumerator reloadShotgun()
     {
         yield return new WaitForSeconds(reloadShotgunTime);
-        bulletsInWeaponMagazine = subtractLoadedAmmoByType(shotgunMagazineSize);
+        bulletsInWeaponMagazine = 2;
+        //bulletsInWeaponMagazine = subtractLoadedAmmoByType(shotgunMagazineSize);
+        inReload = false;
     }
 
     private int subtractLoadedAmmoByType(int numberQuantity)
@@ -269,17 +313,17 @@ public class Player : MonoBehaviour
         int loadedBullets = 0;
         if(ammoTypeUsed == Player.bulletType.NORMAL)
         {
-            loadedBullets -= (ammoCountNormal >= numberQuantity) ? numberQuantity : (int)ammoCountNormal;
+            loadedBullets = (ammoCountNormal >= numberQuantity) ? numberQuantity : (int)ammoCountNormal;
             ammoTypeUsed -= loadedBullets;
         }
         else if(ammoTypeUsed == Player.bulletType.BOUNCY)
         {
-            loadedBullets -= (ammoCountBouncy >= numberQuantity) ? numberQuantity : (int)ammoCountBouncy;
+            loadedBullets = (ammoCountBouncy >= numberQuantity) ? numberQuantity : (int)ammoCountBouncy;
             ammoTypeUsed -= loadedBullets;
         }
         else if(ammoTypeUsed == Player.bulletType.EXPLO)
         {
-            loadedBullets -= (ammoCountExplo >= numberQuantity) ? numberQuantity : (int)ammoCountExplo;
+            loadedBullets = (ammoCountExplo >= numberQuantity) ? numberQuantity : (int)ammoCountExplo;
             ammoTypeUsed -= loadedBullets;
         }
         return loadedBullets;
@@ -352,7 +396,7 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag.Equals("WeaponSymbol")) {
             pickUpAllowed = true;
             weaponSymbol = collision.gameObject;
-            if (weaponSymbol.name.Contains("pistol")){
+            /*if (weaponSymbol.name.Contains("pistol")){
                 bulletsInWeaponMagazine = collision.gameObject.GetComponent<PistoSymbolScript>().pistolAmmoInMagazine;
             }
             else if (weaponSymbol.name.Contains("ak")){
@@ -360,7 +404,7 @@ public class Player : MonoBehaviour
             }
             else if (weaponSymbol.name.Contains("shotgun")){
                 bulletsInWeaponMagazine = collision.gameObject.GetComponent<ShotgunSymboScript>().shotgunAmmoInMagazine;
-            }
+            }*/
         } else if (collision.gameObject.tag.Equals("AmmoSymbol1") || collision.gameObject.tag.Equals("AmmoSymbol2") || collision.gameObject.tag.Equals("AmmoSymbol3")) {
             ammoSymbol = collision.gameObject;
             Debug.Log(collision.gameObject.name);
@@ -392,6 +436,7 @@ public class Player : MonoBehaviour
             pistol.SetActive(true);
             shotgun.SetActive(false);
             firePoint = pistolFirePoint;
+            bulletsInWeaponMagazine = pistolMagazineSize;
             dropCurrentWeapon(isHoldingAk);
             isHoldingAk = 1;
 
@@ -402,6 +447,7 @@ public class Player : MonoBehaviour
             pistol.SetActive(false);
             shotgun.SetActive(false);
             firePoint = akFirePoint;
+            bulletsInWeaponMagazine = akMagazineSize;
             dropCurrentWeapon(isHoldingAk);
             isHoldingAk = 0;
         }
@@ -412,6 +458,7 @@ public class Player : MonoBehaviour
             pistol.SetActive(false);
             shotgun.SetActive(true);
             firePoint = shotgunFirePoint;
+            bulletsInWeaponMagazine = shotgunMagazineSize;
             dropCurrentWeapon(isHoldingAk);
             isHoldingAk = 2;
 
@@ -434,43 +481,52 @@ public class Player : MonoBehaviour
     //[RPC] - obsolete
     [PunRPC]
     void ShootAk() {
-        if(ammoTypeUsed == bulletType.NORMAL)
-            PhotonNetwork.Instantiate(bulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
-        else if(ammoTypeUsed == bulletType.BOUNCY)
-            PhotonNetwork.Instantiate(bouncyBulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
-        else if(ammoTypeUsed == bulletType.EXPLO)
-            PhotonNetwork.Instantiate(exploBulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
+        if(bulletsInWeaponMagazine != 0) {
+            if(ammoTypeUsed == bulletType.NORMAL)
+                PhotonNetwork.Instantiate(bulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
+            else if(ammoTypeUsed == bulletType.BOUNCY)
+                PhotonNetwork.Instantiate(bouncyBulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
+            else if(ammoTypeUsed == bulletType.EXPLO)
+                PhotonNetwork.Instantiate(exploBulletPrefab.name, akFirePoint.transform.position, akFirePoint.transform.rotation); //Instantiation of a new bullet
+            bulletsInWeaponMagazine--;
+        }
     }
 
     [PunRPC]
     void ShootPistol() {
-        if (ammoTypeUsed == bulletType.NORMAL)
-            PhotonNetwork.Instantiate(bulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
-        else if (ammoTypeUsed == bulletType.BOUNCY)
-            PhotonNetwork.Instantiate(bouncyBulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
-        else if (ammoTypeUsed == bulletType.EXPLO)
-            PhotonNetwork.Instantiate(exploBulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
+        if(bulletsInWeaponMagazine != 0) {
+            if (ammoTypeUsed == bulletType.NORMAL)
+                PhotonNetwork.Instantiate(bulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
+            else if (ammoTypeUsed == bulletType.BOUNCY)
+                PhotonNetwork.Instantiate(bouncyBulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
+            else if (ammoTypeUsed == bulletType.EXPLO)
+                PhotonNetwork.Instantiate(exploBulletPrefab.name, pistolFirePoint.transform.position, pistolFirePoint.transform.rotation); //Instantiation of a new bullet
+            bulletsInWeaponMagazine--;
+        }
     }
 
     [PunRPC]
     void ShootShotgun() {
-        int shotgunScatteringValueMiddle = Random.Range(0, 5);
-        int shotgunScatteringValueRight = Random.Range(15, 40);
-        int shotgunScatteringValueLeft = Random.Range(320, 345);
-        if (ammoTypeUsed == bulletType.NORMAL) {
-            PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueMiddle)); //Instantiation of a new bullet
-            PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueRight)); //Instantiation of a new bullet
-            PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueLeft)); //Instantiation of a new bullet
-        }
-        else if (ammoTypeUsed == bulletType.BOUNCY) { 
-            PhotonNetwork.Instantiate(bouncyBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueMiddle)); //Instantiation of a new bullet
-            PhotonNetwork.Instantiate(bouncyBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueRight)); //Instantiation of a new bullet
-            PhotonNetwork.Instantiate(bouncyBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueLeft)); //Instantiation of a new bullet
-        }
-        else if (ammoTypeUsed == bulletType.EXPLO) {
-            PhotonNetwork.Instantiate(exploBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueMiddle)); //Instantiation of a new bullet
-            PhotonNetwork.Instantiate(exploBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0,0, shotgunScatteringValueRight)); //Instantiation of a new bullet
-            PhotonNetwork.Instantiate(exploBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueLeft)); //Instantiation of a new bullet
+        if(bulletsInWeaponMagazine != 0) {
+            int shotgunScatteringValueMiddle = Random.Range(0, 5);
+            int shotgunScatteringValueRight = Random.Range(15, 40);
+            int shotgunScatteringValueLeft = Random.Range(320, 345);
+            if (ammoTypeUsed == bulletType.NORMAL) {
+                PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueMiddle)); //Instantiation of a new bullet
+                PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueRight)); //Instantiation of a new bullet
+                PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueLeft)); //Instantiation of a new bullet
+            }
+            else if (ammoTypeUsed == bulletType.BOUNCY) { 
+                PhotonNetwork.Instantiate(bouncyBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueMiddle)); //Instantiation of a new bullet
+                PhotonNetwork.Instantiate(bouncyBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueRight)); //Instantiation of a new bullet
+                PhotonNetwork.Instantiate(bouncyBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueLeft)); //Instantiation of a new bullet
+            }
+            else if (ammoTypeUsed == bulletType.EXPLO) {
+                PhotonNetwork.Instantiate(exploBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueMiddle)); //Instantiation of a new bullet
+                PhotonNetwork.Instantiate(exploBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0,0, shotgunScatteringValueRight)); //Instantiation of a new bullet
+                PhotonNetwork.Instantiate(exploBulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueLeft)); //Instantiation of a new bullet
+            }
+            bulletsInWeaponMagazine--;
         }
     }
 
