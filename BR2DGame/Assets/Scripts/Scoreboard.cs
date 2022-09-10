@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -15,13 +16,20 @@ public class Scoreboard : MonoBehaviour
     {
         scoreboard.SetActive(false);
 
-        for (int i = 0; i < 9; i++)
+        foreach (var player in PhotonNetwork.PlayerList)
         {
             GameObject newScoreEntry = Instantiate(scoreEntry, scoreboardPosition);
             TMP_Text[] texts = newScoreEntry.GetComponentsInChildren<TMP_Text>();
-            Debug.Log(texts.Length);
-            texts[0].text = i.ToString();
-            texts[1].text = "nickname1234";
+            //Debug.Log(texts.Length);
+            Debug.Log(player.CustomProperties["health"]?.ToString());
+
+            //PhotonView view = PhotonView.Find(1);
+            //view.
+
+            //GetComponent<PhotonView>().owner.customProperties["property"];
+
+            texts[0].text = "9th";
+            texts[1].text = player.NickName;
             texts[2].text = "99";
             texts[3].text = "59:59";
         }
@@ -38,5 +46,9 @@ public class Scoreboard : MonoBehaviour
         {
             scoreboard.SetActive(false);
         }
+
+        foreach(var player in PhotonNetwork.PlayerList)
+            Debug.Log(player?.NickName + " " + player?.CustomProperties["health"]?.ToString());
+        
     }
 }
