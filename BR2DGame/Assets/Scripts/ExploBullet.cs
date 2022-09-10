@@ -11,6 +11,7 @@ public class ExploBullet : MonoBehaviour
     [SerializeField] private float bulletForce = 50f;
     [SerializeField] PhotonView pv;
     [SerializeField] private float splashRange;
+    [SerializeField] private GameObject animationPrefab;
 
     private Rigidbody2D bulletRigidBody;
 
@@ -85,6 +86,12 @@ public class ExploBullet : MonoBehaviour
 
     [PunRPC]
     public void destroyBullet() {
+        bulletExplosion();
         Destroy(this.gameObject);
+    }
+
+    public void bulletExplosion()
+    {
+        GameObject explosionAnimation = PhotonNetwork.Instantiate(animationPrefab.name, this.transform.position, this.transform.rotation);
     }
 }

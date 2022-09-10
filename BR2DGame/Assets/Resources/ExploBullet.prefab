@@ -175,3 +175,4 @@ MonoBehaviour:
   bulletForce: 30
   pv: {fileID: 0}
   splashRange: 7
+  animationPrefab: {fileID: 139366, guid: b185c1a9cf067374586d095111b15bd1, type: 3}
