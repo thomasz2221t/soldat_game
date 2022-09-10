@@ -55001,16 +55001,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: shotgunSymbol
       objectReference: {fileID: 0}
-    - target: {fileID: 6216170777480082509, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8602259489720662990, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
       propertyPath: sceneViewId
       value: 23
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 1052017620, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
 --- !u!1 &1151598378
 GameObject:
@@ -56129,8 +56124,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5014862069071888709, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
 --- !u!1 &5014862069071888708 stripped
 GameObject:
@@ -56218,6 +56212,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExploBullet
       objectReference: {fileID: 0}
+    - target: {fileID: 5728578687056636806, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5728578687056636807, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
       propertyPath: shooter
       value: 
@@ -56227,12 +56225,20 @@ PrefabInstance:
       value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 5728578687056636812, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.06794969
+      objectReference: {fileID: 0}
+    - target: {fileID: 5728578687056636812, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.06736232
+      objectReference: {fileID: 0}
+    - target: {fileID: 5728578687056636812, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.441342
+      value: -1.254
       objectReference: {fileID: 0}
     - target: {fileID: 5728578687056636812, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.850026
+      value: 0.445
       objectReference: {fileID: 0}
     - target: {fileID: 5728578687056636812, guid: 42a065ec40a500a45829bd886845da4c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -56327,6 +56333,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bullet
       objectReference: {fileID: 0}
+    - target: {fileID: 7852711942540484104, guid: f3497a9acd763ae40849c51c35e2123c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3497a9acd763ae40849c51c35e2123c, type: 3}
 --- !u!1001 &7518020618008367124
@@ -56402,12 +56412,20 @@ PrefabInstance:
       value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 2229127859195492617, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.057309996
+      objectReference: {fileID: 0}
+    - target: {fileID: 2229127859195492617, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.06257
+      objectReference: {fileID: 0}
+    - target: {fileID: 2229127859195492617, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.5936104
+      value: -1.488
       objectReference: {fileID: 0}
     - target: {fileID: 2229127859195492617, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.889864
+      value: 0.426
       objectReference: {fileID: 0}
     - target: {fileID: 2229127859195492617, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -56452,6 +56470,10 @@ PrefabInstance:
     - target: {fileID: 8020834037226785590, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
       propertyPath: m_Name
       value: BouncyBullet
+      objectReference: {fileID: 0}
+    - target: {fileID: 8020834037226785590, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ac2342556f1fb74dae12dce51d5abb8, type: 3}

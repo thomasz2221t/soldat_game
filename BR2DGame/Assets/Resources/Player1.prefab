@@ -1762,9 +1762,9 @@ MonoBehaviour:
   akMagazineSize: 30
   pistolMagazineSize: 12
   shotgunMagazineSize: 2
-  reloadAkTime: 8
-  reloadPistolTime: 4
-  reloadShotgunTime: 6
+  reloadAkTime: 2
+  reloadPistolTime: 1
+  reloadShotgunTime: 0.5
   normalAmmoBackground: {fileID: 1455838721}
   bouncyAmmoBackground: {fileID: 1444870949}
   exploAmmoBackground: {fileID: 1013149041}

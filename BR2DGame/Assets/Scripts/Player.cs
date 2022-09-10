@@ -63,9 +63,9 @@ public class Player : MonoBehaviour
     [SerializeField] private int akMagazineSize = 30;
     [SerializeField] private int pistolMagazineSize = 12;
     [SerializeField] private int shotgunMagazineSize = 2;
-    [SerializeField] private float reloadAkTime = 2f;
-    [SerializeField] private float reloadPistolTime = 1f;
-    [SerializeField] private float reloadShotgunTime = 0.5f;
+    private float reloadAkTime = 2f;
+    private float reloadPistolTime = 1f;
+    private float reloadShotgunTime = 0.5f;
     private int bulletsInWeaponMagazine;
     private bool inReload = false;
     private uint shotClicksCounter = 0;

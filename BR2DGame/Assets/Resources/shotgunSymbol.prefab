@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6536895827083788081}
   - component: {fileID: 8602259489720662990}
   - component: {fileID: 6000987164726448138}
-  - component: {fileID: 1052017620}
   m_Layer: 0
   m_Name: shotgunSymbol
   m_TagString: WeaponSymbol
@@ -106,7 +105,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents: []
-  sceneViewId: 23
+  sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!58 &6000987164726448138
@@ -125,16 +124,3 @@ CircleCollider2D:
   m_Offset: {x: 0.00023686886, y: 0}
   serializedVersion: 2
   m_Radius: 0.52873564
---- !u!114 &1052017620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6216170777480082509}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24fffde915146ea4883d04da79ef62c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shotgunAmmoInMagazine: 2
