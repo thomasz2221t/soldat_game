@@ -59,5 +59,27 @@ public class Shooting : MonoBehaviour
     void Shoot()
     {
         GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, firePoint.transform.position, firePoint.transform.rotation); //Instantiation of a new bullet
+        //NIE USUWAÆ
+        //SetLayerRecursively(bullet, LayerMask.NameToLayer("ObjectsToHide"));
     }
+
+    //NIE USUWAÆ
+    /*void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        if (null == obj)
+        {
+            return;
+        }
+
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform)
+        {
+            if (null == child)
+            {
+                continue;
+            }
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
+    }*/
 }

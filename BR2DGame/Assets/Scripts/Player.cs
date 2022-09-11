@@ -4,9 +4,14 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class Player : MonoBehaviour
 {
+    private ExitGames.Client.Photon.Hashtable _customProperties = new ExitGames.Client.Photon.Hashtable();
+    private Stopwatch _livingTime = new Stopwatch();
+
     [SerializeField] private float health = 1000;
     private float maxHealth;
     [SerializeField] Image healthbarImage;
@@ -94,7 +99,17 @@ public class Player : MonoBehaviour
     void Start()
     {
         view = GetComponent<PhotonView>();
+
         maxHealth = health;
+
+        _customProperties.Add("health", health);
+        //_customProperties.Add("livingTime", _livingTime.Elapsed);
+        //_customProperties["health"] = health;
+        //PhotonNetwork.LocalPlayer.CustomProperties = _customProperties;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
+
+        
+
         if (view.IsMine) {
             sceneCamera = GameObject.Find("Main Camera");
             head = GameObject.Find("Head");
@@ -118,6 +133,8 @@ public class Player : MonoBehaviour
         playerName.text = view.Owner.NickName;
 
         normalAmmoBackground.color = Color.yellow; //delete later
+
+        _livingTime.Start();
     }
 
     private void Update()
@@ -429,12 +446,17 @@ public class Player : MonoBehaviour
     {
         if (view.IsMine) {
             health -= damage;
+            _customProperties["health"] = health;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
+            //PhotonNetwork.LocalPlayer.CustomProperties["health"] = health;
+
             healthbarImage.fillAmount = health / maxHealth;
             Debug.Log("Health: " + health + " maxHealth: " + maxHealth + " divided: " + health / maxHealth);
         }
         if (health <= 0) {
             if(view.IsMine)
                 PhotonNetwork.LoadLevel("Dead");
+            _livingTime.Stop();
             Destroy(this.gameObject);
         }
     }
