@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class Scoreboard : MonoBehaviour
 {
     public GameObject scoreboard;
-    public Transform scoreboardPosition;
     public GameObject scoreEntry;
 
     // Start is called before the first frame update
@@ -18,7 +17,7 @@ public class Scoreboard : MonoBehaviour
 
         foreach (var player in PhotonNetwork.PlayerList)
         {
-            GameObject newScoreEntry = Instantiate(scoreEntry, scoreboardPosition);
+            GameObject newScoreEntry = Instantiate(scoreEntry, scoreboard.transform);
             TMP_Text[] texts = newScoreEntry.GetComponentsInChildren<TMP_Text>();
             //Debug.Log(texts.Length);
             Debug.Log(player.CustomProperties["health"]?.ToString());

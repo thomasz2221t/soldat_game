@@ -53970,7 +53970,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 378853316}
-  - component: {fileID: 378853317}
   m_Layer: 5
   m_Name: Crosshair
   m_TagString: Untagged
@@ -54003,18 +54002,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &378853317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378853315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ff9fbaf12d926c419766fbb252e0b85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &382046567
 GameObject:
   m_ObjectHideFlags: 0
@@ -54856,6 +54843,7 @@ GameObject:
   - component: {fileID: 832530319}
   - component: {fileID: 832530318}
   - component: {fileID: 832530322}
+  - component: {fileID: 832530323}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -54960,8 +54948,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreboard: {fileID: 2013734721}
-  scoreboardPosition: {fileID: 2013734722}
   scoreEntry: {fileID: 2498180873176474936, guid: 930ef0d7db9c1c24cac7d39bd796edc4, type: 3}
+--- !u!114 &832530323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832530317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff9fbaf12d926c419766fbb252e0b85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  crosshair: {fileID: 378853315}
 --- !u!1 &847943902
 GameObject:
   m_ObjectHideFlags: 0
