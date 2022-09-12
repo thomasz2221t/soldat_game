@@ -54575,6 +54575,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player1
       objectReference: {fileID: 0}
+    - target: {fileID: 2939666525252459142, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6503425617983613220, guid: 19e1ef0cb3f5af545b93bac33d77587e, type: 3}
       propertyPath: sceneViewId
       value: 5
@@ -55852,6 +55856,10 @@ PrefabInstance:
     - target: {fileID: 6194018061372624994, guid: 56013aa58e052104da18e4fad84af2a4, type: 3}
       propertyPath: m_Name
       value: healthpack
+      objectReference: {fileID: 0}
+    - target: {fileID: 6194018061372625492, guid: 56013aa58e052104da18e4fad84af2a4, type: 3}
+      propertyPath: sceneViewId
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 6194018061372625727, guid: 56013aa58e052104da18e4fad84af2a4, type: 3}
       propertyPath: m_RootOrder
