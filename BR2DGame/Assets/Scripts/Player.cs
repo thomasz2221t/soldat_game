@@ -43,6 +43,7 @@ public class Player : MonoBehaviour
     private uint ammoCountExplo = 5;
     private GameObject weaponSymbol;
     private GameObject ammoSymbol;
+    private GameObject healthpackObject;
     private GameObject firePoint;
     private GameObject akFirePoint; 
     private GameObject pistolFirePoint;
@@ -77,6 +78,7 @@ public class Player : MonoBehaviour
     private int bulletsInWeaponMagazine;
     private bool inReload = false;
     private uint shotClicksCounter = 0;
+    private float healthpackPlusHealth = 150;
 
     //Melee
     [SerializeField] private GameObject meleeAnimationPrefab;
@@ -537,6 +539,25 @@ public class Player : MonoBehaviour
                 Debug.Log(ammoCountExplo);
             }
             this.GetComponent<PhotonView>().RPC("destroyAmmoSymbol", RpcTarget.AllBuffered);
+        } else if(collision.gameObject.tag.Equals("healthPack")){
+            healthpackObject = collision.gameObject;
+            if (collision.gameObject.tag.Equals("healthPack") && health < maxHealth)
+            {
+                float healthOffset = maxHealth - health;
+                if (healthOffset < healthpackPlusHealth)
+                {
+                    health = maxHealth;
+                    healthbarImage.fillAmount = health / maxHealth;
+                    Debug.Log("Health: " + health);
+                }
+                else
+                {
+                    health += healthpackPlusHealth;
+                    healthbarImage.fillAmount = health / maxHealth;
+                    Debug.Log("Health: " + health);
+                }
+                this.GetComponent<PhotonView>().RPC("destroyHealthpack", RpcTarget.AllBuffered);
+            }
         }
     }
 
@@ -681,6 +702,11 @@ public class Player : MonoBehaviour
     [PunRPC]
     public void destroyAmmoSymbol() {
         Destroy(ammoSymbol);
+    }
+
+    [PunRPC]
+    public void destroyHealthpack(){
+        Destroy(healthpackObject);
     }
 
 }
