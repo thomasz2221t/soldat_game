@@ -56186,6 +56186,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: healthpack
       objectReference: {fileID: 0}
+    - target: {fileID: 6194018061372625492, guid: 56013aa58e052104da18e4fad84af2a4, type: 3}
+      propertyPath: sceneViewId
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 6194018061372625727, guid: 56013aa58e052104da18e4fad84af2a4, type: 3}
       propertyPath: m_RootOrder
       value: 15
