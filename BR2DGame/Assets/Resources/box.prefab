@@ -100,12 +100,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  akPrefab: {fileID: 8862685645483659192, guid: 53ecaa8c44838f94795c56c34a50f1be, type: 3}
-  pistolPrefab: {fileID: 150354949496728278, guid: eb65e6bae72173a4f9e876a313f143a3, type: 3}
+  akPrefab: {fileID: 0}
+  pistolPrefab: {fileID: 0}
   shotgunPrefab: {fileID: 6216170777480082509, guid: af066a9fa2cc17c44a827ebfc88f6919, type: 3}
   ammoPrefab1: {fileID: 5578416158091996286, guid: aa4ee516d85f5a4499888b096160eb3f, type: 3}
   ammoPrefab2: {fileID: 3475225173991432696, guid: 6fcb4f4c33a4e12438a7ad36a76ec7f0, type: 3}
   ammoPrefab3: {fileID: 4831448538762281015, guid: 8655f997f9238d3478893f4e76194521, type: 3}
+  healthpack: {fileID: 6194018061372624994, guid: 56013aa58e052104da18e4fad84af2a4, type: 3}
 --- !u!61 &4723476177722082729
 BoxCollider2D:
   m_ObjectHideFlags: 0
