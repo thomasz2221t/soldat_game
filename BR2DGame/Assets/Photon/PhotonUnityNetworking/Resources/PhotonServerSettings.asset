@@ -54,7 +54,6 @@ MonoBehaviour:
   - ShootAk
   - ShootPistol
   - ShootShotgun
-  - destroyHealthpack
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
