@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     [SerializeField] Animator animator;
 
 
-    [SerializeField] private float speed = 50;
+    [SerializeField] private float speed;
     [SerializeField] PhotonView view;
     [SerializeField] TMP_Text playerName;
     [SerializeField] TMP_Text ammoCountText1;
@@ -59,8 +59,10 @@ public class Player : MonoBehaviour
     private float firePointHeadDistance;
     private float mouseHeadDistance;
 
-    private int isHoldingAk = 0; //0 - holdingAk, 1 - holdingPistol, 2 - holdingShotgun
+    private int isHoldingAk = -1; //0 - holdingAk, 1 - holdingPistol, 2 - holdingShotgun, -1 nothing
     private bool pickUpAllowed = false;
+
+    private bool isMultiplayer = false;
 
     //////////////////////////////// Shooting ////////////////////////////////
     
@@ -127,12 +129,10 @@ public class Player : MonoBehaviour
             pistolFirePoint = GameObject.Find("PistolFirePoint");
             shotgunFirePoint = GameObject.Find("ShotgunFirePoint");
 
-            if (isHoldingAk == 0) {
-                pistol.SetActive(false);
-                shotgun.SetActive(false);
-                firePoint = akFirePoint;
-                bulletsInWeaponMagazine = akMagazineSize;
-            }
+            this.GetComponent<PhotonView>().RPC("setWeaponsNotActive", RpcTarget.AllBuffered);
+
+            firePoint = akFirePoint;
+            bulletsInWeaponMagazine = akMagazineSize;
 
             sceneCamera.SetActive(false);
             playerCamera.SetActive(true);
@@ -146,11 +146,30 @@ public class Player : MonoBehaviour
 
         _livingTime.Start();
     }
+    public void OnLobbyStatisticsUpdate() {
+        Debug.Log(PhotonNetwork.PlayerList.Length + " Players Online");
+        if(PhotonNetwork.PlayerList.Length >= 2) 
+            isMultiplayer = true;
+        if(isMultiplayer && PhotonNetwork.PlayerList.Length == 1) {
+            PhotonNetwork.Destroy(view);
+            if (view.IsMine)
+                PhotonNetwork.LoadLevel("Winner");
+            _livingTime.Stop();
+        }
+    }
+
+    [PunRPC]
+    public void setWeaponsNotActive() {
+        pistol.SetActive(false);
+        shotgun.SetActive(false);
+        ak.SetActive(false);
+    }
 
     private void Update()
     {
         if (!view.IsMine)
             return;
+        OnLobbyStatisticsUpdate(); // check how many players are online
 
         ammoCountText1.text = ammoCountNormal.ToString();
         ammoCountText2.text = ammoCountBouncy.ToString();
@@ -505,10 +524,10 @@ public class Player : MonoBehaviour
             Debug.Log("Health: " + health + " maxHealth: " + maxHealth + " divided: " + health / maxHealth);
         }
         if (health <= 0) {
+            PhotonNetwork.Destroy(view);
             if(view.IsMine)
                 PhotonNetwork.LoadLevel("Dead");
             _livingTime.Stop();
-            Destroy(this.gameObject);
         }
     }
 

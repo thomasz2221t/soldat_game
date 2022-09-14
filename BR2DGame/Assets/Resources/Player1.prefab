@@ -1583,7 +1583,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5795116111823007489
 Transform:
   m_ObjectHideFlags: 0
@@ -1884,7 +1884,7 @@ MonoBehaviour:
   healthbarImage: {fileID: 792610514}
   ui: {fileID: 367174296}
   animator: {fileID: 738452321538991370}
-  speed: 15
+  speed: 10
   view: {fileID: 0}
   playerName: {fileID: 654949055}
   ammoCountText1: {fileID: 1118737994}
@@ -2534,7 +2534,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5656695083793871603
 Transform:
   m_ObjectHideFlags: 0
