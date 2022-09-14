@@ -10,7 +10,6 @@ TagManager:
   - AmmoSymbol3
   - AmmoSymbol1
   - wall
-  - healthPack
   layers:
   - Default
   - TransparentFX
