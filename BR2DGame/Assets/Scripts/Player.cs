@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     private float maxHealth;
     [SerializeField] Image healthbarImage;
     [SerializeField] GameObject ui;
+    [SerializeField] Animator animator;
+
 
     [SerializeField] private float speed = 50;
     [SerializeField] PhotonView view;
@@ -35,11 +37,13 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
     [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
     [SerializeField] private GameObject shotgun; // !!! Don't change, it has to be initialized by SerializeField !!!
+    [SerializeField] private GameObject melee; // !!! Don't change, it has to be initialized by SerializeField !!!
     private uint ammoCountNormal = 60;
     private uint ammoCountBouncy = 15;
     private uint ammoCountExplo = 5;
     private GameObject weaponSymbol;
     private GameObject ammoSymbol;
+    private GameObject healthpackObject;
     private GameObject firePoint;
     private GameObject akFirePoint; 
     private GameObject pistolFirePoint;
@@ -74,6 +78,12 @@ public class Player : MonoBehaviour
     private int bulletsInWeaponMagazine;
     private bool inReload = false;
     private uint shotClicksCounter = 0;
+    private float healthpackPlusHealth = 150;
+
+    //Melee
+    [SerializeField] private GameObject meleeAnimationPrefab;
+    [SerializeField] private float meleeAttackRange;
+    private float meleeDamage = 40f;
 
     /// UI ///
     [SerializeField] private Image normalAmmoBackground;
@@ -200,6 +210,20 @@ public class Player : MonoBehaviour
             mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
         }
 
+        //Melee Attack
+        if (Input.GetKeyDown(KeyCode.Mouse1)) { //right mouse click
+                                                //animator.transform.position = new Vector3(animator.transform.position.x, animator.transform.position.y + 1, animator.transform.position.z);
+                                                //animator.bodyPosition = new Vector3(animator.transform.position.x, animator.transform.position.y + 1, animator.transform.position.z);
+                                                //animator.runtimeAnimatorController.animationClip
+                                                //melee.transform.position = new Vector3(0, 0, 0);
+
+            //Debug.Log("click click");
+            //PhotonNetwork.Instantiate(meleeAnimationPrefab.name, this.transform.position, this.transform.rotation);
+
+            animator.Play("MeleeAttack"); //works only in single
+            meleeAttack();
+        }
+
         ammoCountText1.text = ammoCountNormal.ToString();
         ammoCountText2.text = ammoCountBouncy.ToString();
         ammoCountText3.text = ammoCountExplo.ToString();
@@ -251,6 +275,34 @@ public class Player : MonoBehaviour
             {
                 inReload = true;
                 StartCoroutine("reloadShotgun");
+            }
+        }
+    }
+
+    public void meleeAttack() {
+        //Debug.Log("inside explode");
+        var hitColliders = Physics2D.OverlapCircleAll(transform.position, meleeAttackRange);
+        foreach (var hitCollider in hitColliders) {
+            Debug.Log("something found");
+            Player player = hitCollider.GetComponent<Player>();
+            Box box = hitCollider.GetComponent<Box>();
+            Barrel barrel = hitCollider.GetComponent<Barrel>();
+            if (player && player.GetComponent<PhotonView>().IsMine != view.IsMine) {
+                Debug.Log("player found");
+                //var closestPoint = hitCollider.ClosestPoint(transform.position);
+                //Debug.Log("closest point: " + closestPoint);
+                //var distance = Vector3.Distance(hitCollider.ClosestPoint(transform.position), transform.position);
+                //Debug.Log("distance: " + distance);
+                //var damagePercent = Mathf.InverseLerp(0, splashRange, distance);
+                player.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, meleeDamage);
+            }
+            if (box) {
+                box.TakeDamage(meleeDamage);
+                Debug.Log("box found");
+            }
+            if (barrel) {
+                Debug.Log("barrel found");
+                barrel.TakeDamage(meleeDamage);
             }
         }
     }
@@ -429,7 +481,7 @@ public class Player : MonoBehaviour
                 float currentAngle = playerRigidbody.rotation;
                 float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 85; //87 degrees - offset, which should be changed after creating final player model
                 head.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the weapon, it should point to the local cursor
-
+                                                                         //Knife swing
                 //More elaborate way to smoothe the angle is written below. Should be used at a later time
 
                 /*float angleDiff = angle - currentAngle;
@@ -437,7 +489,6 @@ public class Player : MonoBehaviour
                 angle = currentAngle + angleDiff;
                 float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
             }
-
         }
     }
 
@@ -488,6 +539,25 @@ public class Player : MonoBehaviour
                 Debug.Log(ammoCountExplo);
             }
             this.GetComponent<PhotonView>().RPC("destroyAmmoSymbol", RpcTarget.AllBuffered);
+        } else if(collision.gameObject.tag.Equals("healthPack")){
+            healthpackObject = collision.gameObject;
+            if (collision.gameObject.tag.Equals("healthPack") && health < maxHealth)
+            {
+                float healthOffset = maxHealth - health;
+                if (healthOffset < healthpackPlusHealth)
+                {
+                    health = maxHealth;
+                    healthbarImage.fillAmount = health / maxHealth;
+                    Debug.Log("Health: " + health);
+                }
+                else
+                {
+                    health += healthpackPlusHealth;
+                    healthbarImage.fillAmount = health / maxHealth;
+                    Debug.Log("Health: " + health);
+                }
+                this.GetComponent<PhotonView>().RPC("destroyHealthpack", RpcTarget.AllBuffered);
+            }
         }
     }
 
@@ -632,6 +702,11 @@ public class Player : MonoBehaviour
     [PunRPC]
     public void destroyAmmoSymbol() {
         Destroy(ammoSymbol);
+    }
+
+    [PunRPC]
+    public void destroyHealthpack(){
+        Destroy(healthpackObject);
     }
 
 }

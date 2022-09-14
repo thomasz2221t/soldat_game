@@ -46,8 +46,8 @@ public class Scoreboard : MonoBehaviour
             scoreboard.SetActive(false);
         }
 
-        foreach(var player in PhotonNetwork.PlayerList)
-            Debug.Log(player?.NickName + " " + player?.CustomProperties["health"]?.ToString());
+        //foreach(var player in PhotonNetwork.PlayerList)
+        //    Debug.Log(player?.NickName + " " + player?.CustomProperties["health"]?.ToString());
         
     }
 }
