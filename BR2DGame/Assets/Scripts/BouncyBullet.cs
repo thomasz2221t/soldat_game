@@ -36,7 +36,7 @@ public class BouncyBullet : MonoBehaviour
 
     /// <summary>
     /// Metoda Start wywo³ywana przed pierwsz¹ aktualizacj¹ klatki. 
-    ///  Przechowuje wywo³ania metod oraz inicjalizacje zmiennych.
+    /// Przechowuje wywo³ania metod oraz inicjalizacje zmiennych.
     /// </summary>
     private void Start() {
         pv = GetComponent<PhotonView>();

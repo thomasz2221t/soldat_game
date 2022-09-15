@@ -1,16 +1,25 @@
 using Photon.Pun;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
+/// <summary>
+/// Klasa Scoreboard realizuj¹ca abstrakt tablicy wyników 
+/// </summary>
 public class Scoreboard : MonoBehaviour
 {
+    /// <summary>
+    /// Zmienna przechowuj¹ca referencjê do obiektu tablicy wyników
+    /// </summary>
     public GameObject scoreboard;
+    /// <summary>
+    /// Zmienna przechowuj¹ca referencjê do obiektu realizujacego przechowywanie wyników
+    /// </summary>
     public GameObject scoreEntry;
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Metoda Start wywo³ywana przed pierwsz¹ aktualizacj¹ klatki. Przechowuje wywo³ania metod oraz inicjalizacje zmiennych.
+    /// Stworzenie instancji obiektu newScoreEntry, pobranie danych oraz zapis na tablicê wyników
+    /// </summary>
     void Start()
     {
         scoreboard.SetActive(false);
@@ -19,13 +28,6 @@ public class Scoreboard : MonoBehaviour
         {
             GameObject newScoreEntry = Instantiate(scoreEntry, scoreboard.transform);
             TMP_Text[] texts = newScoreEntry.GetComponentsInChildren<TMP_Text>();
-            //Debug.Log(texts.Length);
-            Debug.Log(player.CustomProperties["health"]?.ToString());
-
-            //PhotonView view = PhotonView.Find(1);
-            //view.
-
-            //GetComponent<PhotonView>().owner.customProperties["property"];
 
             texts[0].text = "9th";
             texts[1].text = player.NickName;
@@ -34,7 +36,9 @@ public class Scoreboard : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Metoda update realizuj¹ca pokazanie tablicy wyników na ¿¹danie gracza, po wciœniêciu przycisku tab
+    /// </summary>
     void Update()
     {
         if (Input.GetKey(KeyCode.Tab))
@@ -44,10 +48,6 @@ public class Scoreboard : MonoBehaviour
         else
         {
             scoreboard.SetActive(false);
-        }
-
-        //foreach(var player in PhotonNetwork.PlayerList)
-        //    Debug.Log(player?.NickName + " " + player?.CustomProperties["health"]?.ToString());
-        
+        }   
     }
 }

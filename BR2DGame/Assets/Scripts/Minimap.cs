@@ -1,8 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using Photon.Pun;
 using UnityEngine;
 
+/// <summary>
+/// Klasa realizuj¹ca abstrakt minimapy, GUI gracza
+/// </summary>
 public class Minimap : MonoBehaviour
 {
 
@@ -10,6 +10,9 @@ public class Minimap : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Metoda realizuj¹ca aktualizacjê minimapy zgodnie z po³o¿eniem gracza
+    /// </summary>
     private void LateUpdate() {
         if (SpawnPlayers.getLocalPlayerReference() != null) {
             Vector3 newPosition = SpawnPlayers.getLocalPlayerReference().transform.position;
