@@ -116,6 +116,7 @@ public class Scoreboard : MonoBehaviour
             texts[1].text = _scoreEntries.ElementAt(i).nickName;
             texts[2].text = _scoreEntries.ElementAt(i).livingStatus;
             texts[3].text = _scoreEntries.ElementAt(i).score.ToString();
+            //Debug.Log("Scoreboard log: " + _scoreEntries.ElementAt(i).score.ToString());
         }
 
         for (int i = rowsToUpdate; i < 9; i++)

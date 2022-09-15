@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Zmienna przechowuj¹ca punkty ¿ycia gracza
     /// </summary>
+    /// 
     [SerializeField] private float health = 1000;
     /// <summary>
     /// Zmienna przechowuj¹ca maksymalne ¿ycie gracza
@@ -316,10 +317,10 @@ public class Player : MonoBehaviour
         //Ustawienie nazwy gracza
         playerName.text = view.Owner.NickName;
 
-        _livingTime.Start();
         _customProperties.Add("livingStatus", true); 
-        _customProperties.Add("score", _livingTime.Elapsed.Seconds * 10);
+        _customProperties.Add("score", 0);
         PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
+        _livingTime.Start();
     }
     
     /// <summary>
@@ -473,7 +474,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        _customProperties["score"] = _livingTime.Elapsed.Seconds * 10;
+        _customProperties["score"] = (int)_livingTime.Elapsed.TotalSeconds * 10;
         PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
     }
 
