@@ -295,10 +295,6 @@ public class Player : MonoBehaviour
 
         maxHealth = health;
 
-        _customProperties.Add("health", health);
-
-        PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
-
         if (view.IsMine) {
             //przypisanie referencji do potrzebnych komponentów na planszy gry
             sceneCamera = GameObject.Find("Main Camera");
@@ -321,6 +317,9 @@ public class Player : MonoBehaviour
         playerName.text = view.Owner.NickName;
 
         _livingTime.Start();
+        _customProperties.Add("livingStatus", true); 
+        _customProperties.Add("score", _livingTime.Elapsed.Seconds * 10);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
     }
     
     /// <summary>
@@ -473,6 +472,9 @@ public class Player : MonoBehaviour
                 StartCoroutine("reloadShotgun");
             }
         }
+
+        _customProperties["score"] = _livingTime.Elapsed.Seconds * 10;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
     }
 
     /// <summary>
@@ -712,9 +714,6 @@ public class Player : MonoBehaviour
         //Odjêcie punktów ¿ycia
         if (view.IsMine) {
             health -= damage;
-            _customProperties["health"] = health;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
-
             healthbarImage.fillAmount = health / maxHealth;
         }
         //Uœmiercenie gracza je¿eli punkty ¿ycia spadn¹ do 0
@@ -723,6 +722,8 @@ public class Player : MonoBehaviour
             if(view.IsMine)
                 PhotonNetwork.LoadLevel("Dead");
             _livingTime.Stop();
+            _customProperties["livingStatus"] = false;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
     }
 

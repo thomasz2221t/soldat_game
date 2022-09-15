@@ -67023,7 +67023,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreboard: {fileID: 2013734721}
-  scoreEntry: {fileID: 2498180873176474936, guid: 930ef0d7db9c1c24cac7d39bd796edc4, type: 3}
+  scoreEntryGameObject: {fileID: 2498180873176474936, guid: 930ef0d7db9c1c24cac7d39bd796edc4, type: 3}
 --- !u!114 &832530323
 MonoBehaviour:
   m_ObjectHideFlags: 0
