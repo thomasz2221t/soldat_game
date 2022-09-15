@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Zmienna przechowuj¹ca punkty ¿ycia gracza
     /// </summary>
+    /// 
     [SerializeField] private float health = 1000;
     /// <summary>
     /// Zmienna przechowuj¹ca maksymalne ¿ycie gracza
@@ -295,10 +296,6 @@ public class Player : MonoBehaviour
 
         maxHealth = health;
 
-        _customProperties.Add("health", health);
-
-        PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
-
         if (view.IsMine) {
             //przypisanie referencji do potrzebnych komponentów na planszy gry
             sceneCamera = GameObject.Find("Main Camera");
@@ -320,6 +317,9 @@ public class Player : MonoBehaviour
         //Ustawienie nazwy gracza
         playerName.text = view.Owner.NickName;
 
+        _customProperties.Add("livingStatus", true); 
+        _customProperties.Add("score", 0);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         _livingTime.Start();
     }
     
@@ -473,6 +473,9 @@ public class Player : MonoBehaviour
                 StartCoroutine("reloadShotgun");
             }
         }
+
+        _customProperties["score"] = (int)_livingTime.Elapsed.TotalSeconds * 10;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
     }
 
     /// <summary>
@@ -712,9 +715,6 @@ public class Player : MonoBehaviour
         //Odjêcie punktów ¿ycia
         if (view.IsMine) {
             health -= damage;
-            _customProperties["health"] = health;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
-
             healthbarImage.fillAmount = health / maxHealth;
         }
         //Uœmiercenie gracza je¿eli punkty ¿ycia spadn¹ do 0
@@ -723,6 +723,8 @@ public class Player : MonoBehaviour
             if(view.IsMine)
                 PhotonNetwork.LoadLevel("Dead");
             _livingTime.Stop();
+            _customProperties["livingStatus"] = false;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
         }
     }
 
