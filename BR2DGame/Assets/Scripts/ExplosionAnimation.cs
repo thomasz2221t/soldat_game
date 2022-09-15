@@ -9,7 +9,7 @@ public class ExplosionAnimation : MonoBehaviour
     /// <summary>
     /// Zmienna przechowuj¹ca referencjê do obiektu animacji 
     /// </summary>
-    public GameObject animation;
+    public GameObject gameObject;
     /// <summary>
     /// Zmienna przechowuj¹ca promieñ animacji
     /// </summary>
@@ -51,7 +51,7 @@ public class ExplosionAnimation : MonoBehaviour
     [PunRPC]
     public void destroyAnimation()
     {
-        Destroy(this.animation);
+        Destroy(this.gameObject);
     }
 
     /// <summary>
