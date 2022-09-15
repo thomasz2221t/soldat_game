@@ -328,7 +328,6 @@ public class Player : MonoBehaviour
     /// Ustawia zmienn¹ logiczn¹ isMultiplayer je¿eli rozgrywka spe³nia warunki do zwyciestwa.
     /// </summary>
     public void OnLobbyStatisticsUpdate() {
-        Debug.Log(PhotonNetwork.PlayerList.Length + " Players Online");
         if(PhotonNetwork.PlayerList.Length >= 2) 
             isMultiplayer = true;
         if(isMultiplayer && PhotonNetwork.PlayerList.Length == 1) {
@@ -394,7 +393,6 @@ public class Player : MonoBehaviour
 
         //Podniesienie itemów z ziemi oraz wyrzucenie broni je¿eli gracza posiada broñ
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E)) {
-            Debug.Log(weaponSymbol.name);
             equipWeapon(weaponSymbol.name);
             this.GetComponent<PhotonView>().RPC("equipWeapon", RpcTarget.OthersBuffered, weaponSymbol.name);
             this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.All);
@@ -440,7 +438,6 @@ public class Player : MonoBehaviour
             {
                 if (inReload != true) {
                     ShootAk();
-                    Debug.Log(bulletsInWeaponMagazine);
                     timeStamp = Time.time + shotCooldown;
                 }
             }
