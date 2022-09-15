@@ -7,9 +7,9 @@ using UnityEngine;
 public class Bullet : MonoBehaviourPun
 {
     [SerializeField] private GameObject shooter;
-    [SerializeField] private float destroyTime = 2f;
-    [SerializeField] private float damage = 15;
-    [SerializeField] private float bulletForce = 50f;
+    [SerializeField] private float destroyTime;
+    [SerializeField] private float damage;
+    [SerializeField] private float bulletForce;
     [SerializeField] PhotonView pv;
 
     private Rigidbody2D bulletRigidBody;

@@ -389,7 +389,7 @@ GameObject:
   - component: {fileID: 209028385733867368}
   - component: {fileID: 4895575605462000969}
   m_Layer: 5
-  m_Name: LiveTime
+  m_Name: Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -524,7 +524,7 @@ GameObject:
   - component: {fileID: 2693406568417445149}
   - component: {fileID: 1167393452221722160}
   m_Layer: 5
-  m_Name: KillCount
+  m_Name: LivingStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -548,7 +548,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: -20}
+  m_SizeDelta: {x: 120, y: -20}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &2693406568417445149
 CanvasRenderer:
