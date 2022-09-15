@@ -7,59 +7,175 @@ using TMPro;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
+/// <summary>
+/// Klasa player reprezentuj¹ca abstrakt gracza.
+/// </summary>
 public class Player : MonoBehaviour
 {
+    /// <summary>
+    /// Tablica hashów przekazuj¹ca dane o graczu do tabeli wyników
+    /// </summary>
     private ExitGames.Client.Photon.Hashtable _customProperties = new ExitGames.Client.Photon.Hashtable();
+    /// <summary>
+    /// Zmienna zliczaj¹ca czas ¿ycia gracza
+    /// </summary>
     private Stopwatch _livingTime = new Stopwatch();
-
+    /// <summary>
+    /// Zmienna przechowuj¹ca punkty ¿ycia gracza
+    /// </summary>
     [SerializeField] private float health = 1000;
+    /// <summary>
+    /// Zmienna przechowuj¹ca maksymalne ¿ycie gracza
+    /// </summary>
     private float maxHealth;
     [SerializeField] Image healthbarImage;
     [SerializeField] GameObject ui;
     [SerializeField] Animator animator;
-
-
+    /// <summary>
+    /// Zmienna przechowuj¹ca prêdkoœæ ruchu gracza
+    /// </summary>
     [SerializeField] private float speed = 50;
+    /// <summary>
+    /// Widok komponentu PhotonView - widok gracza w rozgrywce multiplayer
+    /// </summary>
     [SerializeField] PhotonView view;
+    /// <summary>
+    /// Pole tekstowe przechowuj¹ce nick gracza
+    /// </summary>
     [SerializeField] TMP_Text playerName;
+    /// <summary>
+    /// Pole tekstowe przechowuj¹ce iloœæ amunicji podstawowej
+    /// </summary>
     [SerializeField] TMP_Text ammoCountText1;
+    /// <summary>
+    /// Pole tekstowe przechowuj¹ce iloœæ amunicji odbijaj¹cej siê
+    /// </summary>
     [SerializeField] TMP_Text ammoCountText2;
+    /// <summary>
+    /// Pole tekstowe przechowuj¹ce iloœæ amunicji eksploduj¹cej
+    /// </summary>
     [SerializeField] TMP_Text ammoCountText3;
+    /// <summary>
+    /// Pole tekstowe przechowuj¹ce iloœæ amunicji w magazynu
+    /// </summary>
     [SerializeField] TMP_Text weaponMagazine;
+    /// <summary>
+    /// Powiadomienie, ¿e trwa prze³adowywanie broni
+    /// </summary>
     [SerializeField] TMP_Text reloadingNotification;
-
+    /// <summary>
+    /// Komponent Rigidbody gracza
+    /// </summary>
     [SerializeField] private Rigidbody2D playerRigidbody;
+    /// <summary>
+    /// Zmienna przechowuj¹ca referencje do komponentu kamery gracza
+    /// </summary>
     [SerializeField] private GameObject playerCamera;
-
+    /// <summary>
+    /// Prefab karabinu szturmowego
+    /// </summary>
     [SerializeField] private GameObject akSymbolPrefab;
+    /// <summary>
+    /// Prefab pistoletu
+    /// </summary>
     [SerializeField] private GameObject pistolSymbolPrefab;
+    /// <summary>
+    /// Prefab strzelby
+    /// </summary>
     [SerializeField] private GameObject shotgunSymbolPrefab;
-    [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
-    [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
-    [SerializeField] private GameObject shotgun; // !!! Don't change, it has to be initialized by SerializeField !!!
-    [SerializeField] private GameObject melee; // !!! Don't change, it has to be initialized by SerializeField !!!
+    /// <summary>
+    /// Referencja do obiektu karabinu szturmowego
+    /// </summary>
+    [SerializeField] private GameObject ak;
+    /// <summary>
+    /// Referencja do obiektu pistoletu
+    /// </summary>
+    [SerializeField] private GameObject pistol;
+    /// <summary>
+    /// Referencja do obiektu strzelby
+    /// </summary>
+    [SerializeField] private GameObject shotgun;
+    /// <summary>
+    /// Referencja do obiektu ataku krótkodystansowego
+    /// </summary>
+    [SerializeField] private GameObject melee;
+    /// <summary>
+    /// Zmienna zliczaj¹ca iloœæ amunicji podstawowej
+    /// </summary>
     private uint ammoCountNormal = 60;
+    /// <summary>
+    /// Zmienna zliczaj¹ca iloœæ amunicji odbijaj¹cej siê
+    /// </summary>
     private uint ammoCountBouncy = 15;
+    /// <summary>
+    /// Zmienna zliczaj¹ca iloœæ amunicji eksploduj¹cej
+    /// </summary>
     private uint ammoCountExplo = 5;
+    /// <summary>
+    /// Referencja do obiektu symbolu karabinu szturmowego
+    /// </summary>
     private GameObject weaponSymbol;
+    /// <summary>
+    /// Referencja do obiektu symbolu amunicji
+    /// </summary>
     private GameObject ammoSymbol;
+    /// <summary>
+    /// Rwferencja do obiektu apteczki
+    /// </summary>
     private GameObject healthpackObject;
+    /// <summary>
+    /// Referencja do obiektu po³o¿enia lufy aktulanie wybranej broni
+    /// </summary>
     private GameObject firePoint;
-    private GameObject akFirePoint; 
+    /// <summary>
+    /// Referencja do obiektu po³o¿enia lufy karabinu szturmowego
+    /// </summary>
+    private GameObject akFirePoint;
+    /// <summary>
+    /// Referencja do obiektu po³o¿enia lufy pistoletu
+    /// </summary>
     private GameObject pistolFirePoint;
+    /// <summary>
+    /// Referencja do obiektu g³owy gracza
+    /// </summary>
     private GameObject head;
+    /// <summary>
+    /// Referencja do obiektu po³o¿enia lufy strzelby
+    /// </summary>
     private GameObject shotgunFirePoint;
-
+    /// <summary>
+    /// Referencja do obiektu kamery sceny
+    /// </summary>
     private GameObject sceneCamera;
-
+    /// <summary>
+    /// Wektor przechowuj¹cy pozyjcê gracza
+    /// </summary>
     private Vector2 inputPosition;
+    /// <summary>
+    /// Wektor przechowuj¹cy aktuln¹ pozycjê kursora myszy
+    /// </summary>
     private Vector2 mousePosition;
+    /// <summary>
+    /// Wektor przechowuj¹cy po³o¿enie obiektu g³owy modelu gracza
+    /// </summary>
     private Vector2 headPosition;
+    /// <summary>
+    /// Wektor przechowuj¹cy pozycjê lufy wybranej broni
+    /// </summary>
     private Vector2 firePointPosition;
+    /// <summary>
+    /// Dystans dziel¹cy g³owê gracza oraz pozyjcê lufy karabinu, wartoœæ potrzebna przy okreœlaniu rotacji modelu gracza
+    /// </summary>
     private float firePointHeadDistance;
+    /// <summary>
+    /// Dystans dziel¹cy g³owê gracza oraz pozyjcê kursoru myszy
+    /// </summary>
     private float mouseHeadDistance;
-
-    private int isHoldingAk = 0; //0 - holdingAk, 1 - holdingPistol, 2 - holdingShotgun
+    /// <summary>
+    /// Zmienna definiuj¹ca aktualnie wybran¹ przez gracza broñ.
+    /// Wartoœæ 0 okreœla, ¿e gracza aktualnie posiada broñ 
+    /// </summary>
+    private int weaponId = 0; //0 - holdingAk, 1 - holdingPistol, 2 - holdingShotgun
     private bool pickUpAllowed = false;
 
     //////////////////////////////// Shooting ////////////////////////////////
@@ -127,7 +243,7 @@ public class Player : MonoBehaviour
             pistolFirePoint = GameObject.Find("PistolFirePoint");
             shotgunFirePoint = GameObject.Find("ShotgunFirePoint");
 
-            if (isHoldingAk == 0) {
+            if (weaponId == 0) {
                 pistol.SetActive(false);
                 shotgun.SetActive(false);
                 firePoint = akFirePoint;
@@ -581,8 +697,8 @@ public class Player : MonoBehaviour
             reloadingNotification.text = "";
             Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
             inReload = false;
-            dropCurrentWeapon(isHoldingAk);
-            isHoldingAk = 1;
+            dropCurrentWeapon(weaponId);
+            weaponId = 1;
             ammoTypeUsed = Player.bulletType.NORMAL;
             normalAmmoBackground.color = Color.yellow;
             bouncyAmmoBackground.color = Color.white;
@@ -601,8 +717,8 @@ public class Player : MonoBehaviour
             reloadingNotification.text = "";
             Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
             inReload = false;
-            dropCurrentWeapon(isHoldingAk);
-            isHoldingAk = 0;
+            dropCurrentWeapon(weaponId);
+            weaponId = 0;
             ammoTypeUsed = Player.bulletType.NORMAL;
             normalAmmoBackground.color = Color.yellow;
             bouncyAmmoBackground.color = Color.white;
@@ -621,8 +737,8 @@ public class Player : MonoBehaviour
             reloadingNotification.text = "";
             Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
             inReload = false;
-            dropCurrentWeapon(isHoldingAk);
-            isHoldingAk = 2;
+            dropCurrentWeapon(weaponId);
+            weaponId = 2;
             ammoTypeUsed = Player.bulletType.NORMAL;
             normalAmmoBackground.color = Color.yellow;
             bouncyAmmoBackground.color = Color.white;
