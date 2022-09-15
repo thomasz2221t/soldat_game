@@ -1,30 +1,54 @@
-using System.Collections;
-using System.Collections.Generic;
 using Photon.Pun;
-using Photon;
 using UnityEngine;
 
+/// <summary>
+/// Klasa Shooting reprezentuj¹ca abstrakt kontrolera oddawania strza³u
+/// </summary>
 public class Shooting : MonoBehaviour
 {
+    /// <summary>
+    /// Zmienna przechowuj¹ca pozycjê oraz rotacjê lufy broni
+    /// </summary>
     [SerializeField] private Transform firePoint;
+    /// <summary>
+    /// Zmienna przechowuj¹ca prefab pocisku
+    /// </summary>
     [SerializeField] private GameObject bulletPrefab;
+    /// <summary>
+    /// Zmienna kontroluj¹ca czas opóŸnienia po strzale
+    /// </summary>
     [SerializeField] static private float shotCooldown = 0.1f;
+    /// <summary>
+    /// Zmienna okreœlaj¹ca rozmiar magazynka karabinu szturmowego
+    /// </summary>
     [SerializeField] private int magazineSize = 30;
 
-    [SerializeField] private GameObject ak; // !!! Don't change, it has to be initialized by SerializeField !!!
-    [SerializeField] private GameObject pistol; // !!! Don't change, it has to be initialized by SerializeField !!!
+    /// <summary>
+    /// Referencja do obiektu karabinu szturmowego
+    /// </summary>
+    [SerializeField] private GameObject ak;
+    /// <summary>
+    /// Referencja do obiektu pistoletu
+    /// </summary>
+    [SerializeField] private GameObject pistol;
 
     float timeStamp = 0;
     float timeStamp2 = 0;
 
     PhotonView pv;
 
+    /// <summary>
+    /// Metoda Start wywo³ywana przed pierwsz¹ aktualizacj¹ klatki. 
+    /// </summary>
     void Start()
     {
         pv = this.GetComponent<PhotonView>();
     }
 
-    // Update is called once per frame
+
+    /// <summary>
+    /// Metoda Update wywo³ywana po ka¿dej klatce, kontroluje wp³yw logiki gry na stan obiektu
+    /// </summary>
     void Update()
     {
         if (ak.activeInHierarchy && Input.GetButton("Fire1")&& pv.IsMine)
@@ -35,16 +59,6 @@ public class Shooting : MonoBehaviour
                 timeStamp = Time.time + shotCooldown;
                 magazineSize--;
             }
-
-            //[DELETE] AutoReload cooldown not working anyway
-            if(magazineSize <= 0)
-            {
-                if(timeStamp2 <= Time.time)
-                {
-                    magazineSize = 30;
-                    timeStamp2 = Time.time + 3f;
-                }
-            }
         }
         else if(pistol.activeInHierarchy && Input.GetButtonDown("Fire1") && pv.IsMine)
         {
@@ -54,32 +68,14 @@ public class Shooting : MonoBehaviour
     }
 
     //function realizing releasing the bullet from barell
-    //[RPC] - obsolete
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguj¹ca logikê oddania strza³u z broni
+    /// </summary>
     [PunRPC]
     void Shoot()
     {
-        GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, firePoint.transform.position, firePoint.transform.rotation); //Instantiation of a new bullet
-        //NIE USUWAÆ
-        //SetLayerRecursively(bullet, LayerMask.NameToLayer("ObjectsToHide"));
+        //Utworzenie instancji pocisku
+        GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, firePoint.transform.position, firePoint.transform.rotation);
+
     }
-
-    //NIE USUWAÆ
-    /*void SetLayerRecursively(GameObject obj, int newLayer)
-    {
-        if (null == obj)
-        {
-            return;
-        }
-
-        obj.layer = newLayer;
-
-        foreach (Transform child in obj.transform)
-        {
-            if (null == child)
-            {
-                continue;
-            }
-            SetLayerRecursively(child.gameObject, newLayer);
-        }
-    }*/
 }
