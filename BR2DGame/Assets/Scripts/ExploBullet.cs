@@ -7,7 +7,7 @@ public class ExploBullet : MonoBehaviour
 {
     [SerializeField] private GameObject shooter;
     [SerializeField] private float destroyTime = 2f;
-    [SerializeField] private float damage = 15;
+    [SerializeField] private float damage;
     [SerializeField] private float bulletForce = 50f;
     [SerializeField] PhotonView pv;
     [SerializeField] private float splashRange;
@@ -42,17 +42,17 @@ public class ExploBullet : MonoBehaviour
         Wall wall = collision.GetComponent<Wall>();
 
         if (destroyable != null) {
-            destroyable.TakeDamage(damage);
+            destroyable.TakeDamage(10f);
             hit = true;
         }
 
         if (barrel != null) {
-            barrel.TakeDamage(damage);
+            barrel.TakeDamage(10f);
             hit = true;
         }
 
         if ((playerBody != null) && (!collision.gameObject.GetPhotonView().IsMine)) {
-            playerBody.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, damage);
+            playerBody.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, 10f);
             hit = true;
         }
 
@@ -77,9 +77,17 @@ public class ExploBullet : MonoBehaviour
         var hitColliders = Physics2D.OverlapCircleAll(transform.position, splashRange);
         foreach (var hitCollider in hitColliders) {
             Player player = hitCollider.GetComponent<Player>();
+            Box box = hitCollider.GetComponent<Box>();
+            Barrel barrel = hitCollider.GetComponent<Barrel>();
             if (player) {
-                player.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, 100.00f);
+                player.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, damage);
                 Debug.Log("Ammo exploded and dealt dmg to a player");
+            }
+            if (box) {
+                box.TakeDamage(damage);
+            }
+            if (barrel) {
+                barrel.TakeDamage(damage);
             }
         }
     }

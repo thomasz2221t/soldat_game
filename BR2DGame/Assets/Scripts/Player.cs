@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
@@ -34,7 +33,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Zmienna przechowuj¹ca prêdkoœæ ruchu gracza
     /// </summary>
-    [SerializeField] private float speed = 50;
+    [SerializeField] private float speed;
     /// <summary>
     /// Widok komponentu PhotonView - widok gracza w rozgrywce multiplayer
     /// </summary>
@@ -173,137 +172,227 @@ public class Player : MonoBehaviour
     private float mouseHeadDistance;
     /// <summary>
     /// Zmienna definiuj¹ca aktualnie wybran¹ przez gracza broñ.
-    /// Wartoœæ 0 okreœla, ¿e gracza aktualnie posiada broñ 
+    /// Wartoœæ -1 okreœla, ¿e gracz nie podniós³ jeszcze broni.
+    /// Wartoœæ 0 okreœla, ¿e gracz aktualnie posiada karabin szturmowy.
+    /// Wartoœæ 1 okreœla, ¿e gracz aktualnie posiada pistolet.
+    /// Wartoœæ 2 okreœla, ¿e gracz aktualnie posiada strzelbê
     /// </summary>
-    private int weaponId = 0; //0 - holdingAk, 1 - holdingPistol, 2 - holdingShotgun
+    private int weaponId = -1; //0 - holdingAk, 1 - holdingPistol, 2 - holdingShotgun, -1 nothing
+    /// <summary>
+    /// Zmienna logczina kontroluj¹ca logikê podnoszenia itemów na mapie
+    /// </summary>
     private bool pickUpAllowed = false;
+    /// <summary>
+    /// Zmienna logiczna kontroluj¹ca przebieg gry wieloosobowej
+    /// </summary>
+    private bool isMultiplayer = false;
 
     //////////////////////////////// Shooting ////////////////////////////////
     
+    /// <summary>
+    /// Referencja do obiektu prefaba pocisku standardowego
+    /// </summary>
     [SerializeField] private GameObject bulletPrefab;
+    /// <summary>
+    /// Referencja do obiektu prefaba pocisku odbijaj¹cego siê
+    /// </summary>
     [SerializeField] private GameObject bouncyBulletPrefab;
+    /// <summary>
+    /// Referencja do obiektu prefaba pocisku eksploduj¹cego
+    /// </summary>
     [SerializeField] private GameObject exploBulletPrefab;
+    /// <summary>
+    /// Zmienna kontroluj¹ca czas opóŸnienia po strzale
+    /// </summary>
     [SerializeField] static private float shotCooldown = 0.1f;
     float timeStamp = 0;
+    /// <summary>
+    /// Zmienna kontroluj¹ca rozmiar magazynka karabinu szturmowego
+    /// </summary>
     [SerializeField] private int akMagazineSize = 30;
+    /// <summary>
+    /// Zmienna kontroluj¹ca rozmiar magazynka pistoletu
+    /// </summary>
     [SerializeField] private int pistolMagazineSize = 12;
+    /// <summary>
+    /// Zmienna kontroluj¹ca rozmiar magazynka strzelby
+    /// </summary>
     [SerializeField] private int shotgunMagazineSize = 2;
+    /// <summary>
+    /// Zmienna kontroluj¹ca czas prze³adowania karabinu szturmowego
+    /// </summary>
     private float reloadAkTime = 2f;
+    /// <summary>
+    /// Zmienna kontroluj¹ca czas prze³adowania pistoletu
+    /// </summary>
     private float reloadPistolTime = 1f;
+    /// <summary>
+    /// Zmienna kontroluj¹ca czas prze³adowania strzelby
+    /// </summary>
     private float reloadShotgunTime = 0.5f;
+    /// <summary>
+    /// Zmienna kontroluj¹ca liczbê pocisków w magazynku broni
+    /// </summary>
     private int bulletsInWeaponMagazine;
+    /// <summary>
+    /// Zmienna logiczna kontroluj¹ca czy zachodzi prze³adowanie broni i nie ma mo¿liwoœci strza³u
+    /// </summary>
     private bool inReload = false;
+    /// <summary>
+    /// Zmienna zliczaj¹ca iloœæ naciœniêæ przycisków strza³u
+    /// </summary>
     private uint shotClicksCounter = 0;
+    /// <summary>
+    /// Zmienna przechowuj¹ca iloœæ punktów ¿ycia przyznawanych po zebraniu apteczki
+    /// </summary>
     private float healthpackPlusHealth = 150;
-
-    //Melee
+    /// <summary>
+    /// Zmienna przechowuj¹ca referencje do obiektu ataku wrêcz
+    /// </summary>
     [SerializeField] private GameObject meleeAnimationPrefab;
+    /// <summary>
+    /// Zmienna przechouj¹ca zakres obra¿eñ ataku wrêcz
+    /// </summary>
     [SerializeField] private float meleeAttackRange;
+    /// <summary>
+    /// Zmienna przechowuj¹ca obra¿enia uzyskiwane po ataku wrêcz
+    /// </summary>
     private float meleeDamage = 40f;
-
-    /// UI ///
+    /// <summary>
+    /// Zmienne przechowuj¹ce grafiki mo¿liwych do wybrania typów pocisków 
+    /// </summary>
     [SerializeField] private Image normalAmmoBackground;
     [SerializeField] private Image bouncyAmmoBackground;
     [SerializeField] private Image exploAmmoBackground;
-
+    /// <summary>
+    /// Kolory pocisków odbijaj¹cych siê i wybuchaj¹cych
+    /// </summary>
     Color greenColor = new Color(72, 224, 113, 255);
     Color yellowColor = new Color(242, 163, 46, 255);
-    //////////
 
-
+    /// <summary>
+    /// Enum bulletType przechowuj¹cy typy pocisków, którymi dysponuj¹ gracze
+    /// </summary>
     enum bulletType {
         NORMAL,
         BOUNCY,
         EXPLO
     }
 
+    /// <summary>
+    /// Zmienna typu bulletType przechouj¹ca wybrany przez gracza typ pocisku
+    /// </summary>
     bulletType ammoTypeUsed = Player.bulletType.NORMAL;
 
-    // Start is called before the first frame update
-    //nice way to get child object by name
-    //GameObject firePoint = shooter.transform.Find("FirePoint").gameObject;
+    /// <summary>
+    /// Metoda start wywo³ywana przed pierwsz¹ aktualizacj¹ klatki. 
+    /// Przechowuje wywo³ania metod oraz inicjalizacje zmiennych potrzebnych zaraz po utworzeniu obiektu gracza
+    /// </summary>
     void Start()
     {
+        //Pobranie komponentu PhotonView
         view = GetComponent<PhotonView>();
 
         maxHealth = health;
 
         _customProperties.Add("health", health);
-        //_customProperties.Add("livingTime", _livingTime.Elapsed);
-        //_customProperties["health"] = health;
-        //PhotonNetwork.LocalPlayer.CustomProperties = _customProperties;
+
         PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
 
-        
-
         if (view.IsMine) {
+            //przypisanie referencji do potrzebnych komponentów na planszy gry
             sceneCamera = GameObject.Find("Main Camera");
             head = GameObject.Find("Head");
-            akFirePoint = GameObject.Find("FirePoint"); // akFirePoint
+            akFirePoint = GameObject.Find("FirePoint");
             pistolFirePoint = GameObject.Find("PistolFirePoint");
             shotgunFirePoint = GameObject.Find("ShotgunFirePoint");
 
-            if (weaponId == 0) {
-                pistol.SetActive(false);
-                shotgun.SetActive(false);
-                firePoint = akFirePoint;
-                bulletsInWeaponMagazine = akMagazineSize;
-            }
+            this.GetComponent<PhotonView>().RPC("setWeaponsNotActive", RpcTarget.AllBuffered);
+
+            firePoint = akFirePoint;
+            bulletsInWeaponMagazine = akMagazineSize;
 
             sceneCamera.SetActive(false);
             playerCamera.SetActive(true);
         } else {
             Destroy(ui);
         }
-        Debug.Log(view.Owner.NickName);
+        //Ustawienie nazwy gracza
         playerName.text = view.Owner.NickName;
-
-        normalAmmoBackground.color = Color.yellow; //delete later
 
         _livingTime.Start();
     }
+    
+    /// <summary>
+    /// Metoda kontroluj¹ca liczbê graczy w rozgrywce. Uniemo¿liwia wygranie gry je¿eli w sesji nie by³o wiêcej ni¿ dwóch graczy.
+    /// Ustawia zmienn¹ logiczn¹ isMultiplayer je¿eli rozgrywka spe³nia warunki do zwyciestwa.
+    /// </summary>
+    public void OnLobbyStatisticsUpdate() {
+        Debug.Log(PhotonNetwork.PlayerList.Length + " Players Online");
+        if(PhotonNetwork.PlayerList.Length >= 2) 
+            isMultiplayer = true;
+        if(isMultiplayer && PhotonNetwork.PlayerList.Length == 1) {
+            PhotonNetwork.Destroy(view);
+            if (view.IsMine)
+                PhotonNetwork.LoadLevel("Winner");
+            _livingTime.Stop();
+        }
+    }
 
+    /// <summary>
+    /// Metoda PunRPC wywo³ywana w metodzie Start() ukrywaj¹ca obiekty broni gracza przy inicjalizacji
+    /// </summary>
+    [PunRPC]
+    public void setWeaponsNotActive() {
+        pistol.SetActive(false);
+        shotgun.SetActive(false);
+        ak.SetActive(false);
+    }
+
+    /// <summary>
+    /// Metoda update wywo³ywana po ka¿dej klatce, kontroluje wp³yw logiki gry na stan gracza oraz czynnoœci u¿ytkownika na rozgrywkê
+    /// </summary>
     private void Update()
     {
         if (!view.IsMine)
             return;
 
+        OnLobbyStatisticsUpdate(); //sprawdzenie ilu graczy jest w rogrywce
+
+        //Kontrola UI
         ammoCountText1.text = ammoCountNormal.ToString();
         ammoCountText2.text = ammoCountBouncy.ToString();
         ammoCountText3.text = ammoCountExplo.ToString();
         weaponMagazine.text = bulletsInWeaponMagazine.ToString()+ "/" + ((ak.activeSelf) ? akMagazineSize.ToString() : (pistol.activeSelf ? pistolMagazineSize.ToString() : shotgunMagazineSize.ToString()));
 
-        //picking ammo types
+        //Wybranie typów amunicji
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             deloadAndChangeAmmoType(ammoTypeUsed, bulletType.NORMAL);
-            //ammoTypeUsed = bulletType.NORMAL;
             normalAmmoBackground.color = Color.yellow;
             bouncyAmmoBackground.color = Color.white;
             exploAmmoBackground.color = Color.white;
         }
         if (Input.GetKeyDown(KeyCode.Alpha2)) {
             deloadAndChangeAmmoType(ammoTypeUsed, bulletType.BOUNCY);
-            //ammoTypeUsed = bulletType.BOUNCY;
             normalAmmoBackground.color = Color.white;
             bouncyAmmoBackground.color = Color.green; 
             exploAmmoBackground.color = Color.white;
         }
         if (Input.GetKeyDown(KeyCode.Alpha3)) {
             deloadAndChangeAmmoType(ammoTypeUsed, bulletType.EXPLO);
-            //ammoTypeUsed = bulletType.EXPLO;
             normalAmmoBackground.color = Color.white;
             bouncyAmmoBackground.color = Color.white; 
             exploAmmoBackground.color = Color.red;
         }
 
-
+        //Pobranie pozycji gracza
         inputPosition.x = Input.GetAxis("Horizontal");
         inputPosition.y = Input.GetAxis("Vertical");
 
         Camera playerCam = playerCamera.GetComponent<Camera>();
-        mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition); //Getting the coordinates of mouse cursor as world's point
+        mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition); //Pobranie koordynatów kursora myszy jako punkty na planszy rozgrywki
 
-        //Picking up items from the ground and dropping the weapon that the player is currently holding
+        //Podniesienie itemów z ziemi oraz wyrzucenie broni je¿eli gracza posiada broñ
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E)) {
             Debug.Log(weaponSymbol.name);
             equipWeapon(weaponSymbol.name);
@@ -311,7 +400,7 @@ public class Player : MonoBehaviour
             this.GetComponent<PhotonView>().RPC("destroyWeaponSymbol", RpcTarget.All);
         }
 
-        //Getting positions for the player rotation
+        //Pobranie pozycji dla rotacji gracza
         if (head != null) {
             headPosition.x = head.transform.position.x;
             headPosition.y = head.transform.position.y;
@@ -326,17 +415,9 @@ public class Player : MonoBehaviour
             mouseHeadDistance = Vector2.Distance(headPosition, mousePosition);
         }
 
-        //Melee Attack
-        if (Input.GetKeyDown(KeyCode.Mouse1)) { //right mouse click
-                                                //animator.transform.position = new Vector3(animator.transform.position.x, animator.transform.position.y + 1, animator.transform.position.z);
-                                                //animator.bodyPosition = new Vector3(animator.transform.position.x, animator.transform.position.y + 1, animator.transform.position.z);
-                                                //animator.runtimeAnimatorController.animationClip
-                                                //melee.transform.position = new Vector3(0, 0, 0);
-
-            //Debug.Log("click click");
-            //PhotonNetwork.Instantiate(meleeAnimationPrefab.name, this.transform.position, this.transform.rotation);
-
-            animator.Play("MeleeAttack"); //works only in single
+        //Walka wrêcz, animacja widoczna wy³¹cznie w widoku gracza atakuj¹cego wrêcz
+        if (Input.GetKeyDown(KeyCode.Mouse1)) { 
+            animator.Play("MeleeAttack");
             meleeAttack();
         }
 
@@ -344,14 +425,16 @@ public class Player : MonoBehaviour
         ammoCountText2.text = ammoCountBouncy.ToString();
         ammoCountText3.text = ammoCountExplo.ToString();
 
+        //Pobranie liczby naboi w ekwipunku gracza
         int availableBullets = calculateAvailableBullets();
 
+        //Prze³adowanie broni po naciœniêciu przycisku R
         if (Input.GetKeyDown(KeyCode.R))
         {
             reloadWeapon();
         }
 
-        // Shooting
+        //Logika wystrza³u oraz prze³adowania broni po skoñczeniu siê amunicji
         if (ak.activeInHierarchy && Input.GetButton("Fire1") && view.IsMine) {
             if ((timeStamp <= Time.time) && (bulletsInWeaponMagazine > 0))
             {
@@ -395,34 +478,36 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Metoda obs³uguj¹ca logikê ataku wrêcz
+    /// </summary>
     public void meleeAttack() {
-        //Debug.Log("inside explode");
         var hitColliders = Physics2D.OverlapCircleAll(transform.position, meleeAttackRange);
         foreach (var hitCollider in hitColliders) {
-            Debug.Log("something found");
             Player player = hitCollider.GetComponent<Player>();
             Box box = hitCollider.GetComponent<Box>();
             Barrel barrel = hitCollider.GetComponent<Barrel>();
             if (player && player.GetComponent<PhotonView>().IsMine != view.IsMine) {
-                Debug.Log("player found");
-                //var closestPoint = hitCollider.ClosestPoint(transform.position);
-                //Debug.Log("closest point: " + closestPoint);
-                //var distance = Vector3.Distance(hitCollider.ClosestPoint(transform.position), transform.position);
-                //Debug.Log("distance: " + distance);
-                //var damagePercent = Mathf.InverseLerp(0, splashRange, distance);
+                //Zadanie obra¿eñ atakiem wrêcz graczowi
                 player.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.AllBuffered, meleeDamage);
             }
             if (box) {
+                //Zadanie obra¿eñ atakiem wrêcz obiektowi skrzynki
                 box.TakeDamage(meleeDamage);
-                Debug.Log("box found");
             }
             if (barrel) {
-                Debug.Log("barrel found");
+                //Zadanie obra¿eñ atakiem wrêcz obiektowi beczki
                 barrel.TakeDamage(meleeDamage);
             }
         }
     }
 
+    /// <summary>
+    /// Metoda obs³uguj¹ca logikê prze³adowania w przypadku zmiany typu amunicji. Pociski w broni zostaj¹ wy³adowane i przekazane do 
+    /// ekwipunku, a wybrany rodzaj pocisków jest ³adowany w liczbie dostêpnej w ekwipunku.
+    /// </summary>
+    /// <param name="currentAmmoType"> zmienna przechowuj¹ca typ amunicji obecnej w broni </param>
+    /// <param name="newAmmoType"> zmienna przechowuj¹ca typ amunicji wybrany przez gracza do za³adowania</param>
     private void deloadAndChangeAmmoType(bulletType currentAmmoType, bulletType newAmmoType)
     {
         if (currentAmmoType == Player.bulletType.NORMAL)
@@ -462,6 +547,10 @@ public class Player : MonoBehaviour
         reloadWeapon();
     }
 
+    /// <summary>
+    /// Metoda zlicza amunicjê dostêpn¹ w ekwipunku gracza
+    /// </summary>
+    /// <returns>Zwraca sumê pocisków, któr¹ gracz dysponuje</returns>
     private int calculateAvailableBullets()
     {
         int availableBullets = 0;
@@ -480,6 +569,9 @@ public class Player : MonoBehaviour
         return availableBullets;
     }
 
+    /// <summary>
+    /// Metoda obs³uguj¹ca logikê prze³adowania broni. Uruchamia korutyny, które s¹ kar¹ czasow¹ dla gracza za prze³adowanie.
+    /// </summary>
     private void reloadWeapon()
     {
         int availableBullets = calculateAvailableBullets();
@@ -510,6 +602,10 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Korutyna obs³uguj¹ca prze³adowanie karabinu szturmowego
+    /// </summary>
+    /// <returns>Wymusza na graczu poczekanie kary czasowej przed uzupe³nieneim amunicji w broni</returns>
     IEnumerator reloadAk()
     {
         reloadingNotification.text = "Reloading";
@@ -520,6 +616,10 @@ public class Player : MonoBehaviour
         reloadingNotification.text = "";
     }
 
+    /// <summary>
+    /// Korutyna obs³uguj¹ca prze³adowanie pistoletu
+    /// </summary>
+    /// <returns>Wymusza na graczu poczekanie kary czasowej przed uzupe³nieniem amunicji w broni</returns>
     IEnumerator reloadPistol()
     {
         reloadingNotification.text = "Reloading";
@@ -530,6 +630,10 @@ public class Player : MonoBehaviour
         reloadingNotification.text = "";
     }
 
+    /// <summary>
+    /// Korutyna obs³uguj¹ca prze³adowanie strzelby
+    /// </summary>
+    /// <returns>Wymusza na graczu poczekanie kary czasowej przed uzupe³nieniem amunicji w broni</returns>
     IEnumerator reloadShotgun()
     {
         reloadingNotification.text = "Reloading";
@@ -540,6 +644,11 @@ public class Player : MonoBehaviour
         reloadingNotification.text = "";
     }
 
+    /// <summary>
+    /// Metoda obs³ugujaca logikê zwi¹zan¹ z utrat¹ amunicji w ekwipunku, która jest ³adowana do broni
+    /// </summary>
+    /// <param name="numberQuantity">Zmienna przechowuj¹ca iloœæ mo¿liwych do za³adowania pocisków</param>
+    /// <returns>Zwraca liczbê pocisków za³adowanych do broni w zale¿noœci od dostêponoœci danego typu amunicji</returns>
     private int subtractLoadedAmmoByType(int numberQuantity)
     {
         int loadedBullets = 0;
@@ -561,100 +670,86 @@ public class Player : MonoBehaviour
         return loadedBullets;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Zmienna FixedUpdate wywo³ywana co klatkê. Przechowuje logikê gry zwi¹zan¹ z ruchem i rotacj¹ gracza
+    /// </summary>
     void FixedUpdate()
     {
         if (view.IsMine)
         {
-            //Character movement
+            //Ruch postaci
             playerRigidbody.MovePosition(playerRigidbody.position + inputPosition * speed * Time.fixedDeltaTime);
 
-            //Character rotation
+            //Rotacja postaci
             float lookDirX = 0.0f;
             float lookDirY = 0.0f;
 
-            //Precise aiming rotation (long range)
+            //Rotacja zwi¹zana z precyzyjnym celowaniem d³ugodystansowym
             if ((mouseHeadDistance-4.0f) > (firePointHeadDistance))
             {
                 lookDirX = mousePosition.x - firePoint.transform.position.x;
                 lookDirY = mousePosition.y - firePoint.transform.position.y;
                 float currentAngle = playerRigidbody.rotation;
-                float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 90; //95 degrees - offset, which should be changed after creating final player model
-                head.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the weapon, it should point to the local cursor
-
-                //More elaborate way to smoothe the angle is written below. Should be used at a later time
-
-                /*float angleDiff = angle - currentAngle;
-                angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
-                angle = currentAngle + angleDiff;
-                float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
+                float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 90;
+                head.transform.rotation = Quaternion.Euler(0, 0, angle);
             }
-            //From hips aiming rotation (close range)
+            //Rotacja zwi¹zana z celowaniem z biodra
             else if(mouseHeadDistance != firePointHeadDistance)
             {
                 lookDirX = mousePosition.x - head.transform.position.x;
                 lookDirY = mousePosition.y - head.transform.position.y;
                 float currentAngle = playerRigidbody.rotation;
-                float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 85; //87 degrees - offset, which should be changed after creating final player model
-                head.transform.rotation = Quaternion.Euler(0, 0, angle); //Rotation of the weapon, it should point to the local cursor
-                                                                         //Knife swing
-                //More elaborate way to smoothe the angle is written below. Should be used at a later time
-
-                /*float angleDiff = angle - currentAngle;
-                angleDiff = Mathf.Repeat(angleDiff + 180f, 360f) - 180f;
-                angle = currentAngle + angleDiff;
-                float smoothedAngle = Mathf.Lerp(currentAngle, angle, 0.2f);*/
+                float angle = Mathf.Atan2(lookDirY, lookDirX) * Mathf.Rad2Deg - 85;
+                head.transform.rotation = Quaternion.Euler(0, 0, angle);
             }
         }
     }
 
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguje logikê zwi¹zan¹ z przyjêciem przez gracza obra¿eñ w przypadku trafienia lub znalezienia siê w obra¿eniu obszarowym zadawanym atakiem wrêcz lub wybuchem
+    /// </summary>
+    /// <param name="damage">Parametr przechowuj¹cym iloœæ obra¿eñ zadawanych</param>
     [PunRPC]
     public void TakeDamage(float damage)
     {
+        //Odjêcie punktów ¿ycia
         if (view.IsMine) {
             health -= damage;
             _customProperties["health"] = health;
             PhotonNetwork.LocalPlayer.SetCustomProperties(_customProperties);
-            //PhotonNetwork.LocalPlayer.CustomProperties["health"] = health;
 
             healthbarImage.fillAmount = health / maxHealth;
-            Debug.Log("Health: " + health + " maxHealth: " + maxHealth + " divided: " + health / maxHealth);
         }
+        //Uœmiercenie gracza je¿eli punkty ¿ycia spadn¹ do 0
         if (health <= 0) {
+            PhotonNetwork.Destroy(view);
             if(view.IsMine)
                 PhotonNetwork.LoadLevel("Dead");
             _livingTime.Stop();
-            Destroy(this.gameObject);
         }
     }
 
+    /// <summary>
+    /// Obs³uga kolizji obiektu gracza z innymi obiektami
+    /// </summary>
+    /// <param name="collision">Kolizjator obiektu z którym zachodzi kolizja</param>
     private void OnTriggerEnter2D(Collider2D collision) {
+        //Kolizja z obiektem kategorii broñ
         if (collision.gameObject.tag.Equals("WeaponSymbol")) {
             pickUpAllowed = true;
             weaponSymbol = collision.gameObject;
-            /*if (weaponSymbol.name.Contains("pistol")){
-                bulletsInWeaponMagazine = collision.gameObject.GetComponent<PistoSymbolScript>().pistolAmmoInMagazine;
-            }
-            else if (weaponSymbol.name.Contains("ak")){
-                bulletsInWeaponMagazine = collision.gameObject.GetComponent<AkSymbolScript>().akAmmoInMagazine;
-            }
-            else if (weaponSymbol.name.Contains("shotgun")){
-                bulletsInWeaponMagazine = collision.gameObject.GetComponent<ShotgunSymboScript>().shotgunAmmoInMagazine;
-            }*/
+        //Kolizcja z obiektem kategorii amunicja
         } else if (collision.gameObject.tag.Equals("AmmoSymbol1") || collision.gameObject.tag.Equals("AmmoSymbol2") || collision.gameObject.tag.Equals("AmmoSymbol3")) {
             ammoSymbol = collision.gameObject;
-            Debug.Log(collision.gameObject.name);
             if(collision.gameObject.tag.Equals("AmmoSymbol1")) {
                 ammoCountNormal += 30;
-                Debug.Log(ammoCountNormal);
             } else if(collision.gameObject.tag.Equals("AmmoSymbol2")) {
                 ammoCountBouncy += 30;
-                Debug.Log(ammoCountBouncy);
             } else if(collision.gameObject.tag.Equals("AmmoSymbol3")) {
                 ammoCountExplo += 30;
-                Debug.Log(ammoCountExplo);
             }
             this.GetComponent<PhotonView>().RPC("destroyAmmoSymbol", RpcTarget.AllBuffered);
+            //Kolizja z obiektem kategorii apteczka
         } else if(collision.gameObject.tag.Equals("healthPack")){
             healthpackObject = collision.gameObject;
             if (collision.gameObject.tag.Equals("healthPack") && health < maxHealth)
@@ -664,81 +759,96 @@ public class Player : MonoBehaviour
                 {
                     health = maxHealth;
                     healthbarImage.fillAmount = health / maxHealth;
-                    Debug.Log("Health: " + health);
                 }
                 else
                 {
                     health += healthpackPlusHealth;
                     healthbarImage.fillAmount = health / maxHealth;
-                    Debug.Log("Health: " + health);
                 }
                 this.GetComponent<PhotonView>().RPC("destroyHealthpack", RpcTarget.AllBuffered);
             }
         }
     }
 
+    /// <summary>
+    /// Obs³uga logiki wyjœcia z pola kolizji, wzbronienie mo¿liwoœci podniesienia przedmiotu
+    /// </summary>
+    /// <param name="collision">Kolizjator obiektu, z którego obszaru wychodzimy</param>
     private void OnTriggerExit2D(Collider2D collision) {
         if (collision.gameObject.tag.Equals("WeaponSymbol")) {
             pickUpAllowed = false;
         }
     }
 
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguj¹ca logikê podnoszenia broni przez gracza
+    /// </summary>
+    /// <param name="weaponName">Obiekt symbolu broni, który zosta³ podniesiony</param>
     [PunRPC]
     public void equipWeapon(string weaponName) {
+        //Wyra¿enie logiczne w przypadku podniesienia pistoletu
         if (weaponName.Contains("pistol")) {
-            Debug.Log("Pisztolet znaleziony");
             ak.SetActive(false);
             pistol.SetActive(true);
             shotgun.SetActive(false);
             firePoint = pistolFirePoint;
             bulletsInWeaponMagazine = pistolMagazineSize;
+            //Zatrzymanie korutyn je¿eli trwa³oby prze³adowanie broni
             StopCoroutine("reloadAk");
             StopCoroutine("reloadShotgun");
             reloadingNotification.text = "";
-            Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
             inReload = false;
+            //Wyrzucenie aktualnie przechowywanej broni
             dropCurrentWeapon(weaponId);
+            //Ustawienie pistoletu jako przechowywanej broni
             weaponId = 1;
+            //Zmiana amunicji na podstawow¹ w przypadku zmiany broni
             ammoTypeUsed = Player.bulletType.NORMAL;
             normalAmmoBackground.color = Color.yellow;
             bouncyAmmoBackground.color = Color.white;
             exploAmmoBackground.color = Color.white;
 
         }
+        //Wyra¿enie logiczne w przypadku podniesienia karabinu szturmowego
         else if (weaponName.Contains("ak")) {
-            Debug.Log("Akacz znaleziony");
             ak.SetActive(true);
             pistol.SetActive(false);
             shotgun.SetActive(false);
             firePoint = akFirePoint;
             bulletsInWeaponMagazine = akMagazineSize;
+            //Zatrzymanie korutyn je¿eli trwa³oby prze³adowanie broni
             StopCoroutine("reloadPistol");
             StopCoroutine("reloadShotgun");
             reloadingNotification.text = "";
-            Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
             inReload = false;
+            //Wyrzucenie aktualnie przechowywanej broni
             dropCurrentWeapon(weaponId);
+            //Ustawienie karabinu jako przechowywanej broni
             weaponId = 0;
+            //Zmiana amunicji na podstawow¹ w przypadku zmiany broni
             ammoTypeUsed = Player.bulletType.NORMAL;
             normalAmmoBackground.color = Color.yellow;
             bouncyAmmoBackground.color = Color.white;
             exploAmmoBackground.color = Color.white;
         }
+        //Wyra¿enie logiczne w przypadku podniesienia strzelby
         else if (weaponName.Contains("shotgun"))
         {
-            Debug.Log("Shotgun znaleziony");
             ak.SetActive(false);
             pistol.SetActive(false);
             shotgun.SetActive(true);
             firePoint = shotgunFirePoint;
             bulletsInWeaponMagazine = shotgunMagazineSize;
+            //Zatrzymanie korutyn je¿eli trwa³oby prze³adowanie broni
             StopCoroutine("reloadPistol");
             StopCoroutine("reloadAk");
             reloadingNotification.text = "";
-            Debug.Log("Pociskow mam: " + bulletsInWeaponMagazine);
             inReload = false;
+            //Wyrzucenie aktualnie przechowywanej broni
             dropCurrentWeapon(weaponId);
+            //Ustawienie strzelby jako przechowywanej broni
             weaponId = 2;
+            //Zmiana amunicji na podstawow¹ w przypadku zmiany broni
             ammoTypeUsed = Player.bulletType.NORMAL;
             normalAmmoBackground.color = Color.yellow;
             bouncyAmmoBackground.color = Color.white;
@@ -746,19 +856,24 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void dropCurrentWeapon(int wasHoldingAK) {
+    /// <summary>
+    /// Metoda obs³uguj¹ca logikê wyrzutu broni z rêki gracza przy podnoszeniu nowej
+    /// </summary>
+    /// <param name="weaponId">Id aktualnie przetrzymywanej broni</param>
+    public void dropCurrentWeapon(int weaponId) {
         if (view.IsMine) {
-            if (wasHoldingAK == 0)
+            if (weaponId == 0)
                 PhotonNetwork.Instantiate(akSymbolPrefab.name, this.transform.position, this.transform.rotation);
-            else if(wasHoldingAK == 1)
+            else if(weaponId == 1)
                 PhotonNetwork.Instantiate(pistolSymbolPrefab.name, this.transform.position, this.transform.rotation);
-            else if(wasHoldingAK == 2)
+            else if(weaponId == 2)
                 PhotonNetwork.Instantiate(shotgunSymbolPrefab.name, this.transform.position, this.transform.rotation);
         }
     }
 
-    //function realizing releasing the bullet from barell
-    //[RPC] - obsolete
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguj¹ca wystrza³ z karabinu szturmowego. Tworzy now¹ instacjê obiektu pocisku po wywo³aniu
+    /// </summary>
     [PunRPC]
     void ShootAk() {
         if(bulletsInWeaponMagazine != 0) {
@@ -772,6 +887,9 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguj¹ca wystrza³ z pistoletu. Tworzy now¹ instacjê obiektu pocisku po wywo³aniu
+    /// </summary>
     [PunRPC]
     void ShootPistol() {
         if(bulletsInWeaponMagazine != 0) {
@@ -785,12 +903,17 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguj¹ca wystrza³ ze strzelby. Tworzy now¹ instacjê obiektu pocisku po wywo³aniu
+    /// </summary>
     [PunRPC]
     void ShootShotgun() {
         if(bulletsInWeaponMagazine != 0) {
+            //Losowanie rozrzutu dla pocisków
             int shotgunScatteringValueMiddle = Random.Range(0, 5);
             int shotgunScatteringValueRight = Random.Range(15, 40);
             int shotgunScatteringValueLeft = Random.Range(320, 345);
+            //Stworzenie instancji pocisku wraz z rotacj¹ powiêkszon¹ o wartoœæ rozrzutu
             if (ammoTypeUsed == bulletType.NORMAL) {
                 PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueMiddle)); //Instantiation of a new bullet
                 PhotonNetwork.Instantiate(bulletPrefab.name, shotgunFirePoint.transform.position, shotgunFirePoint.transform.rotation * Quaternion.Euler(0, 0, shotgunScatteringValueRight)); //Instantiation of a new bullet
@@ -810,16 +933,25 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguj¹ca destrukcjê symbolu broni
+    /// </summary>
     [PunRPC]
     public void destroyWeaponSymbol() {
         Destroy(weaponSymbol);
     }
 
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguj¹ca destrukcjê symbolu amunicji
+    /// </summary>
     [PunRPC]
     public void destroyAmmoSymbol() {
         Destroy(ammoSymbol);
     }
 
+    /// <summary>
+    /// Metoda synchronizowana PunRPC obs³uguj¹ca destrukcjê symbolu pakietu apteczki
+    /// </summary>
     [PunRPC]
     public void destroyHealthpack(){
         Destroy(healthpackObject);
